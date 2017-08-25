@@ -1,0 +1,18 @@
+<!--recorder.wxml-->
+
+<!-- style="left: {{recorder_button_style.left}}; width: {{recorder_button_style.width}}; margin-left: {{recorder_button_style.marginLeft}}; margin-bottom: {{recorder_button_style.marginBottom}}; buttom: {{recorder_button_style.buttom}}"  -->
+<template name="recorder">
+<view class="recorder_container">
+  <text class="recorder_timer" bindtap="startTimer" style="color: {{timer > 50 ? 'red' : 'black'}}">{{timer || 0}}s</text>
+  <text class="recorder_prompt">松开完成 上滑取消</text>
+  <image class="recorder_button" type="primary" 
+    src="{{recorder_button_style.cancel ? '../../assets/record_cancel.png' : '../../assets/record_ing.png'}}"
+    bindtap="recorder_tap"
+    bindtouchstart="recorder_tap_start" 
+    bindtouchmove="recorder_tap_move"
+    bindtouchend="recorder_tap_end" 
+    bindtouchcancel="recorder_tap_cancel"
+    animation="{{recorder_button_animation}}"
+  />
+</view>
+</template>

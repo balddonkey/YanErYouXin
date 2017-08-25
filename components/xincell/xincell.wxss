@@ -1,0 +1,123 @@
+/* xincell.wxss */
+
+/* cell容器样式 */
+.cell_container {
+  display: flex;
+  background-color: white;
+  flex-direction: column;
+  box-shadow: 0px 0px 5px #bbb;
+  border-radius: 3px;
+}
+
+/* 头部容器样式 */
+.cell_head {
+  display: flex;
+  padding: 10px;
+  height: 44px;
+}
+
+/* 头部左边头像样式 */
+.cell_avatar {
+  width: 44px;
+  height: 44px;
+  border-width: 0.8px;
+  border-color: lightgray;
+  border-style: solid;
+  border-radius: 3px;
+}
+
+/* 头部邮编容器样式 */
+.cell_head_right {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 标题栏容器样式 */
+.cell_title_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0px 10px;
+}
+
+/* 昵称样式 */
+.cell_nickname {
+  font-size: 17px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* 日期样式 */
+.cell_date {
+  font-size: 14px;
+  color: #888;
+}
+
+/* 编辑按钮样式 */
+.cell_edit {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* 预览容器样式 */
+.cell_preview_container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* 图片预览样式 */
+.cell_preview_image {
+  width: 100%;
+}
+
+/* 视频预览样式 */
+.cell_preview_video {
+  background-color: black;
+  width: 100%;
+}
+
+/* 音频容器样式 */
+.cell_audio_container {
+  display: flex;
+  width: 100%;
+  height: 44px;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 音频图标样式 */
+.cell_audio {
+  width: 44px;
+  height: 44px;
+}
+
+/* 音频时间样式 */
+.cell_audio_time {
+  width: auto;
+  height: 44px;
+  line-height: 44px;
+  font-size: 14px;
+  color: #888;
+}
+
+/* 位置 */
+.cell_location {
+  text-align: center;
+  line-height: 44px;
+  height: 44px;
+  font-size: 14px;
+  color: #888;
+}
+
+/* 分割线 */
+.cell_separator {
+  width: 100%;
+  height: 0.8px;
+  background-color: #b2b2b2;
+  opacity: 0.25;
+}

@@ -1,0 +1,94 @@
+// my.js
+
+// 明信片模板
+let xincell = require('../../components/xincell/xincell.js');
+
+let MyInitial = {
+
+  /**
+   * 页面的初始数据
+   */
+  data: {
+    postdatas: [{
+      id: 0,
+      text: "日狗少年史大彪",
+      location: "高高的骨灰旁边"
+    },{
+      id: 1,
+      text: "日狗少年屎二彪",
+      location: "高高的骨灰旁边"
+    },{
+      id: 2,
+      text: "日狗少年屎三彪",
+      location: "高高的骨灰旁边"
+    }]
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+
+  }
+
+};
+
+// 注入模板JS回调
+Object.assign(MyInitial, xincell.functions);
+// 注入模板data
+Object.assign(MyInitial.data, xincell.data);
+
+console.log('data:', MyInitial.data);
+
+Page(MyInitial);
+
+

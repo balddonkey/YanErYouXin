@@ -1,0 +1,46 @@
+{
+  "pages": [
+    "pages/my/my",
+    "pages/collect/collect",
+    "pages/create/create",
+    "pages/logs/logs",
+    "pages/preview/preview",
+    "pages/repeater/repeater"
+  ],
+  "window": {
+    "backgroundTextStyle": "black",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "light",
+    "backgroundColor": "#efeff4"
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/my/my",
+        "text": "发件箱",
+        "iconPath": "/assets/mail_normal.png",
+        "selectedIconPath": "/assets/mail_select.png"
+      },
+      {
+        "pagePath": "pages/create/create",
+        "text": "创建",
+        "iconPath": "/assets/create_normal.png",
+        "selectedIconPath": "/assets/create_select.png"
+      },
+      {
+        "pagePath": "pages/preview/preview",
+        "text": "收藏",
+        "iconPath": "/assets/collect_normal.png",
+        "selectedIconPath": "/assets/collect_select.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 20000,
+    "connectSocket": 20000,
+    "uploadFile": 20000,
+    "downloadFile": 20000
+  },
+  "debug": false
+}

@@ -1,0 +1,15 @@
+/* my.wxss */
+
+/* 导入模板样式 */
+@import "../../components/xincell/xincell.wxss";
+
+.my_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.my_listview {
+  margin: 10px;
+}

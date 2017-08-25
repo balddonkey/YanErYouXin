@@ -1,0 +1,10 @@
+<!--my.wxml-->
+<!--我发出的-->
+<import src="../../components/xincell/xincell.wxml" />
+<view class="my_container">
+  <block wx:for="{{postdatas}}" wx:for-index="idx" wx:for-item="item" wx:key="id">
+    <view class="my_listview">
+      <template is="xincell" data="{{item}}" />
+    </view>
+  </block>
+</view>
