@@ -2,8 +2,8 @@
 <import src="../../components/xincell/xincell.wxml"/>
 <view class="preview_container">
     <view class="preview_head">
-      <template is="xincell" data="{{item}}" bindtap="tapVoice"/>
+      <template is="xincell" data="{{postcard}}"/>
     </view>
-    <button class="preview_add_collect" type="primary" bindtap="onCollect">发送</button>
+    <button class="preview_add_collect" type="primary" bindtap="onSend">发送</button>
     <button class="preview_add_collect" bindtap="onEdit">返回编辑</button>
 </view>

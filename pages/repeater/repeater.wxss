@@ -1,1 +1,10 @@
 /* repeater.wxss */
+
+@import '../../components/MWActionSheet/MWActionSheet.wxss';
+
+.repeater_container {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: red;
+}

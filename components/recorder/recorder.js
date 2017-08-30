@@ -23,6 +23,9 @@ let config ={
   delegate: {
     didRecordAudio: function(fp) {
       // 需要使用此组件的page实现
+    },
+    didCancelRecord: function() {
+      
     }
   },
 

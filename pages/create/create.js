@@ -1,7 +1,14 @@
 // create.js
 
 let recorder = require('../../components/recorder/recorder.js');
+let TopTip = require('../../components/TopTip/TopTip.js');
 let fetcher = require('../../utils/Fetcher.js');
+
+let util = require('../../utils/util.js');
+let mh = require('../../utils/MediaHelper.js');
+
+let phonePattern = /1[\d]{10,10}$/;
+var app = getApp()
 
 let CreateInitial = {
 
@@ -9,11 +16,12 @@ let CreateInitial = {
    * 页面的初始数据
    */
   data: {
-    phoneNum: null,
     create: true,
     errMsg: '',
     debug: false,
     postcard: {
+      poster: null,
+      phoneNum: '18516601886',
       id: null,
       audio: null,
       video: null,
@@ -27,9 +35,12 @@ let CreateInitial = {
     wx.getClipboardData({
       success: function (res) {
         console.log(res);
-        t.setData({
-          phoneNum: res.data
-        });
+        let objc = {
+          detail: {
+            value: res.data
+          }
+        };
+        t.onInputPhoneNum(objc);
       }
     });
   },
@@ -40,7 +51,7 @@ let CreateInitial = {
     console.log('on video record');
     wx.chooseVideo({
       maxDuration: 15,
-      success: function(res) {
+      success: function (res) {
         console.log('upload video');
         wx.showLoading({
           title: '视频上传中',
@@ -59,10 +70,10 @@ let CreateInitial = {
           wx.hideLoading();
         });
       },
-      fail: function(res) {
+      fail: function (res) {
 
       },
-      complete: function(res) {
+      complete: function (res) {
       }
     })
   },
@@ -88,7 +99,7 @@ let CreateInitial = {
       postcardId: t.data.postcard.id
     }, (res) => {
       console.log('did upload audio:', res);
-      t.data.postcard.audio = fp;
+      t.data.postcard.audio = res.content.path;
       t.setData({
         errMsg: JSON.stringify(res) || '屁都没有',
         postcard: t.data.postcard
@@ -97,27 +108,27 @@ let CreateInitial = {
     }, (res) => {
       console.log('zzz:', res);
       t.setData({
-        errMsg: t.data.errMsg += res.toString()
+        errMsg: t.data.errMsg += util.isUndef(res.toString) ? null : res.toString()
       })
     })
   },
 
-  tapVoice: function() {
-    console.log('tap voice');
+  tapVoice: function () {
     let t = this;
-    wx.playVoice({
-      filePath: t.data.postcard.audio,
+    console.log('tap voice:', t.data.postcard.audio);
+    mh.playVoice({
+      url: t.data.postcard.audio,
+      cb: function(res) {
+        console.log(res);
+      }
     });
-    wx.navigateTo({
-      url: '',
-    })
   },
 
   // 选择位置信息
-  chooseLocation: function() {
+  chooseLocation: function () {
     let t = this;
     wx.chooseLocation({
-      success: function(res) {
+      success: function (res) {
         console.log('loc:', res);
         t.data.postcard.location = res;
         t.setData({
@@ -125,6 +136,44 @@ let CreateInitial = {
         });
       },
     })
+  },
+
+  // 预览
+  onPreview: function () {
+
+    let phone = this.data.postcard.phoneNum || '';
+    console.log('ll:', phone.length, phone.search(phonePattern));
+    if (phone.search(phonePattern) < 0) {
+      this.showToptip({
+        title: '无效的手机号码',
+        type: 'Warning'
+      });
+      return;
+    }
+    let params = JSON.stringify(this.data.postcard);
+    wx.navigateTo({
+      url: '../preview/preview?postcard=' + params,
+    });
+  },
+
+  onInputPhoneNum: function (objc) {
+    console.log('input:', objc);
+    let t = this;
+    let value = objc.detail.value;
+    let postcard = t.data.postcard;
+    postcard.phoneNum = value;
+    t.setData({
+      postcard: postcard
+    });
+    let ss = value.search(phonePattern);
+    console.log('ss:', ss);
+    if (value.length >= 11 && ss < 0) {
+      console.log('无效手机号码');
+      t.showToptip({
+        title: '无效的手机号码',
+        type: 'Warning'
+      });
+    }
   },
 
   /**
@@ -137,6 +186,7 @@ let CreateInitial = {
     t.setData({
       postcard: t.data.postcard
     });
+    console.log('ErrColor:', t.data);
   },
 
   /**
@@ -150,6 +200,15 @@ let CreateInitial = {
     //     create: false
     //   });
     // }, 2 * 1000);
+    let t = this;
+    let postcard = t.data.postcard;
+    app.getUserInfo((res) => {
+      console.log('res:', res);
+      postcard.poster = res;
+      t.setData({
+        postcard: postcard
+      });
+    });
   },
 
   /**
@@ -198,5 +257,8 @@ let CreateInitial = {
 
 Object.assign(CreateInitial, recorder.functions);
 Object.assign(CreateInitial.data, recorder.data);
+
+Object.assign(CreateInitial, TopTip.functions);
+Object.assign(CreateInitial.data, TopTip.data);
 
 Page(CreateInitial);

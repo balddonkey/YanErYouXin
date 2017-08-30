@@ -5,36 +5,16 @@
     "pages/create/create",
     "pages/logs/logs",
     "pages/preview/preview",
-    "pages/repeater/repeater"
+    "pages/repeater/repeater",
+    "pages/sms/sms",
+    "pages/MyCollect/mycollect"
   ],
   "window": {
     "backgroundTextStyle": "black",
     "navigationBarBackgroundColor": "#000",
-    "navigationBarTitleText": "WeChat",
     "navigationBarTextStyle": "light",
-    "backgroundColor": "#efeff4"
-  },
-  "tabBar": {
-    "list": [
-      {
-        "pagePath": "pages/my/my",
-        "text": "发件箱",
-        "iconPath": "/assets/mail_normal.png",
-        "selectedIconPath": "/assets/mail_select.png"
-      },
-      {
-        "pagePath": "pages/create/create",
-        "text": "创建",
-        "iconPath": "/assets/create_normal.png",
-        "selectedIconPath": "/assets/create_select.png"
-      },
-      {
-        "pagePath": "pages/preview/preview",
-        "text": "收藏",
-        "iconPath": "/assets/collect_normal.png",
-        "selectedIconPath": "/assets/collect_select.png"
-      }
-    ]
+    "backgroundColor": "#efeff4",
+    "enablePullDownRefresh": true
   },
   "networkTimeout": {
     "request": 20000,

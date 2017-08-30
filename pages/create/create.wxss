@@ -2,6 +2,7 @@
 
 @import "../../components/xincell/xincell.wxss";
 @import "../../components/recorder/recorder.wxss";
+@import "../../components/TopTip/TopTip.wxss";
 
 .create_container {
   display: flex;
@@ -37,7 +38,7 @@
   border-radius: 3px;
   flex-direction: row;
   justify-content: space-between;
-  padding: 20px;
+  padding: 40px;
 }
 
 .record_panel {

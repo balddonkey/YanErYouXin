@@ -8,14 +8,14 @@ App({
     logs.unshift(Date.now());
     wx.setStorageSync('logs', logs);
 
-    login.login({
-      success: function(res) {
-        console.log('ss:', res);
-      },
-      fail: function(res) {
-        console.log('ff:', res);
-      }
-    })
+    // login.login({
+    //   success: function(res) {
+    //     console.log('ss:', res);
+    //   },
+    //   fail: function(res) {
+    //     console.log('ff:', res);
+    //   }
+    // })
   },
 
   getUserInfo: function(cb) {

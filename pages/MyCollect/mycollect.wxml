@@ -1,4 +1,4 @@
-<!--my.wxml-->
+<!--mycollect.wxml-->
 <!--我发出的-->
 <import src="../../components/xincell/xincell.wxml" />
 <import src="../../components/TopNavigator/TopNavigator.wxml" />
@@ -13,7 +13,7 @@
   </block>
   <block wx:else>
     <view class="my_empty_container">
-      <text>没有已发送的明信片</text>
+      <text>没有已收藏的明信片</text>
     </view>
   </block>
 </view>

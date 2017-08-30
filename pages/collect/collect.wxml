@@ -1,9 +1,10 @@
 <!--collect.wxml-->
 <!--收藏-->
 <import src="../../components/xincell/xincell.wxml" />
+<import src="../../components/TopNavigator/TopNavigator.wxml" />
 <view class="preview_container">
     <view class="preview_head">
-      <template is="xincell" data="{{item}}" bindtap="tapVoice" />
+      <template is="xincell" data="{{postcard}}" bindtap="tapVoice" />
     </view>
     <button class="preview_add_collect" type="primary" bindtap="onCollect">添加到收藏</button>
 </view>

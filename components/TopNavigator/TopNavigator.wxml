@@ -1,0 +1,11 @@
+
+<template name='TopNavigator'>
+<view class="topnav_container">
+  <block wx:for='{{nav_datasource.items}}' wx:for-index='idx' wx:for-item='item'>
+    <view class="nav_item" data-item='{{item}}' data-index='{{idx}}' bindtap="selectItem">
+      <image class="nav_image" src="{{nav_datasource.selectIndex === idx ? item.selectedIcon : item.icon}}" mode='aspectFit'/>
+      <text class="nav_title">{{item.title}}</text>
+    </view>
+  </block>
+</view>
+</template>

@@ -4,30 +4,38 @@
     <!-- 头部布局 -->
     <view class="cell_head">
       <!-- 头像 -->
-      <image class="cell_avatar" src="../../assets/avatar_normal.png" mode="aspectFit"/>
+      <image class="cell_avatar" src="{{postcard.poster.avatarUrl || '../../assets/avatar_normal.png'}}" mode="aspectFit"/>
       <!-- 头部右边文字标题 -->
       <view class="cell_head_right">
         <!-- 创建人和日期 -->
         <view class="cell_title_container">
-          <text class="cell_nickname">{{item.text}}</text>
-          <text class="cell_date">1970-01-01</text>
+          <text class="cell_nickname">{{'暂时没有这个字段'}}</text>
+          <text class="cell_date">{{postcard.createTime}}</text>
         </view>
         <!-- 编辑按钮 -->
-        <image class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit"/>
+        <image data-postcard="{{postcard}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit"/>
       </view>
     </view>
     <!-- 视频、图片控件布局 -->
     <view class="cell_preview_container">
-    <!-- <image class="cell_preview_image" src="../../assets/biantai.gif" mode="aspectFill"/> -->
-      <video id="cell_preview_video" class="cell_preview_video" src="https://www.streamind.com/upload/VIDEO_UPLOAD/2017-08-18/1503028963465trim.BBE419AB-4741-4C93-86FF-7D7F69CB1E93.MOV" objectFit="fit" bindtap="tapVoice"/>
+    <block wx:if="{{postcard.video}}">
+      <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.video}}" objectFit="fit" />
+    </block>
+    <block wx:else>
+      <image class="cell_preview_image" src="../../assets/scenery.jpg"/>
+    </block>
     </view>
     <!-- 音频控件布局 -->
-    <view class="cell_audio_container" bindtap="tapVoice" data-item="{{item}}">
+    <block wx:if="{{postcard.audio}}">
+    <view class="cell_audio_container" bindtap="tapVoice" data-audio="{{postcard.audio}}">
       <image class="cell_audio" src="../../assets/audio_play_normal.png"></image>
       <text class="cell_audio_time">40s</text>
     </view>
-    <view class="cell_separator"/>
-    <!-- 位置控件布局 -->
-    <text class="cell_location">{{item.location}}</text>
+    </block>
+    <block wx:if="{{postcard.location && postcard.location.name}}">
+      <view class="cell_separator"/>
+      <!-- 位置控件布局 -->
+      <text class="cell_location">{{postcard.location.name}}</text>
+    </block>
   </view>
 </template>

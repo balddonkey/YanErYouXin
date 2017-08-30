@@ -1,4 +1,4 @@
-/* my.wxss */
+/* mycollect.wxss */
 
 /* 导入模板样式 */
 @import "../../components/xincell/xincell.wxss";
@@ -14,7 +14,6 @@
   padding-top: 0px;
 }
 
-
 .my_empty_container {
   width: 100%;
   margin-top: 150px;
@@ -22,3 +21,4 @@
   color: #bbb;
   font-size: 17px;
 }
+

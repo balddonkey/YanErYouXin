@@ -1,4 +1,4 @@
-// my.js
+// MyCollect.js
 
 // 明信片模板
 let xincell = require('../../components/xincell/xincell.js');
@@ -9,7 +9,7 @@ let fetcher = require('../../utils/Fetcher.js');
 
 let Postcard = require('../../models/Postcard.js');
 
-let MyInitial = {
+let MyCollectInitial = {
 
   /**
    * 页面的初始数据
@@ -17,7 +17,7 @@ let MyInitial = {
   data: {
     postdatas: [],
     nav_datasource: {
-      selectIndex: 0,
+      selectIndex: 2,
       items: [{
         title: '发件箱',
         icon: '../../assets/mail_normal.png',
@@ -36,7 +36,6 @@ let MyInitial = {
     nav_scroll_animation: null
   },
 
-  // TopNavigator delegate method
   didSelectItem: function (index) {
     console.log('did select index:', index);
     switch (index) {
@@ -55,24 +54,17 @@ let MyInitial = {
             console.log('scan result:', res);
             wx.navigateTo({
               url: '../repeater/repeater?params=' + JSON.stringify(res),
-            });
+            })
           }
         });
+
+        // wx.navigateTo({
+        //   url: '../create/create',
+        // });
         break;
       case 2:
-        wx.redirectTo({
-          url: '../MyCollect/mycollect',
-        });
         break;
     }
-  },
-
-  // Xincell delegate method 
-  editPostcard: function(p) {
-    wx.showActionSheet({
-      title: 'zzz',
-      itemList: ['收藏', '取消收藏', '撤回'],
-    })
   },
 
   /**
@@ -81,7 +73,7 @@ let MyInitial = {
   onLoad: function (options) {
     console.log('options:', options);
     wx.setNavigationBarTitle({
-      title: '发件箱',
+      title: '收藏',
     });
   },
 
@@ -90,7 +82,7 @@ let MyInitial = {
    */
   onReady: function () {
     let t = this;
-    fetcher.getSendList({
+    fetcher.getFavorList({
       cb: function (res) {
         console.log('gsl:', res);
         res.content.map((e) => {
@@ -156,16 +148,16 @@ let MyInitial = {
 };
 
 // 注入模板JS回调
-Object.assign(MyInitial, xincell.functions);
+Object.assign(MyCollectInitial, xincell.functions);
 // 注入模板data
-Object.assign(MyInitial.data, xincell.data);
+Object.assign(MyCollectInitial.data, xincell.data);
 
 
 // 注入模板JS回调
-Object.assign(MyInitial, TopNav.functions);
+Object.assign(MyCollectInitial, TopNav.functions);
 // 注入模板data
-Object.assign(MyInitial.data, TopNav.data);
+Object.assign(MyCollectInitial.data, TopNav.data);
 
-Page(MyInitial);
+Page(MyCollectInitial);
 
 

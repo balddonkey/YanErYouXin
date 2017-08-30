@@ -1,0 +1,10 @@
+
+<template name="MWActionSheet">
+<cover-view class='mw_actionsheet_container'>
+  <block wx:if="{{show}}">
+    <block wx:for="{{itemList}}" wx:for-item="item">
+      <text class="mw_actionsheet_cell">{{item.title}}</text>
+    </block>
+  </block>
+</cover-view>
+</template>

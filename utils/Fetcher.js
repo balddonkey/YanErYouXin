@@ -1,5 +1,8 @@
 
 let ReqErr = {
+  400: {
+    msg: '请求失败，可能是服务器发生了错误'
+  },
   404: {
     msg: 'Not Found'
   },
@@ -50,11 +53,9 @@ let Host = 'https://www.streamind.com/postCard/';
 let Method = 'POST';
 
 let preprocessor = (res, additional) => {
-  if (additional) {
-    additional(res);
-  }
-  console.log('zzz:', res);
+  additional && additional(res);
   let code = res.statusCode;
+  console.log('Pre:', res);
   let reqErr = ReqErr[code];
   if (reqErr) {
     res.data = {
@@ -62,11 +63,17 @@ let preprocessor = (res, additional) => {
       msg: reqErr.msg
     };
   }
-  let json = JSON.parse(res.data);
-  if (additional) {
-    additional(json);
+  if (typeof res.data === 'string') {
+    try {
+      res.data = JSON.parse(res.data);
+    } catch (e) {
+      console.log('Is Not JSON');
+    }
   }
-  return JSON.parse(res.data);
+  // let json = JSON.parse(res.data);
+
+  additional && additional(res.data);
+  return res.data;
 }
 
 let Fit = (res, additional) => {
@@ -83,13 +90,12 @@ let Fit = (res, additional) => {
         message: res.msg
       }
   };
-  if (additional) {
-    additional(res);
-  }
+  additional && additional(res);
   return ret;
 };
 
 let Api = {
+  Host: Host,
   // 上传视频
   uploadVideo: function (filePath, data, cb) {
     let url = Host + 'uploadResource/';
@@ -116,7 +122,6 @@ let Api = {
     Object.assign(formData, data);
     wx.uploadFile({
       url: url,
-      type: 'mp3',
       filePath: filePath,
       name: 'file',
       formData: formData,
@@ -135,6 +140,9 @@ let Api = {
       url: url,
       data: data,
       method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
       success: function (res) {
         cb(Fit(res));
       },
@@ -149,6 +157,10 @@ let Api = {
     let url = Host + 'getPostcard';
     wx.request({
       url: url,
+      method: 'GET',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
       data: {
         postcardId: data
       },
@@ -168,6 +180,9 @@ let Api = {
       url: url,
       data: data,
       method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
       success: function (res) {
         cb(Fit(res));
       },
@@ -186,6 +201,9 @@ let Api = {
         postcardId: data
       },
       method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
       success: function (res) {
         cb(Fit(res));
       },
@@ -193,6 +211,44 @@ let Api = {
         cb(Fit(res));
       }
     });
+  },
+
+  // 获取我发送的
+  getSendList: function(data) {
+    let url = Host + 'getSendList';
+    wx.request({
+      url: url,
+      data: data.data,
+      method: 'GET',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      success: function(res) {
+        data.cb(Fit(res));
+      },
+      fail: function(res) {
+        data.cb(Fit(res));
+      }
+    })
+  },
+
+  // 获取我收藏的
+  getFavorList: function (data) {
+    let url = Host + 'getFavorList';
+    wx.request({
+      url: url,
+      data: data.data,
+      method: 'GET',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      success: function (res) {
+        data.cb(Fit(res));
+      },
+      fail: function (res) {
+        data.cb(Fit(res));
+      }
+    })
   }
 }
 

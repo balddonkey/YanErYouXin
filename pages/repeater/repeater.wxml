@@ -1,5 +1,6 @@
 <!--repeater.wxml-->
-<view>
-
+<import src="../../components/MWActionSheet/MWActionSheet.wxml" />
+<view class="repeater_container" bindtap="onTap">
+{{'params'}}
 </view>
 
