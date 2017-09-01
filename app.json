@@ -1,11 +1,11 @@
 {
   "pages": [
+    "pages/repeater/repeater",
     "pages/my/my",
     "pages/collect/collect",
     "pages/create/create",
     "pages/logs/logs",
     "pages/preview/preview",
-    "pages/repeater/repeater",
     "pages/sms/sms",
     "pages/MyCollect/mycollect"
   ],
@@ -14,7 +14,7 @@
     "navigationBarBackgroundColor": "#000",
     "navigationBarTextStyle": "light",
     "backgroundColor": "#efeff4",
-    "enablePullDownRefresh": true
+    "enablePullDownRefresh": false
   },
   "networkTimeout": {
     "request": 20000,

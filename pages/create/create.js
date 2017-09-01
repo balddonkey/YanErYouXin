@@ -7,8 +7,8 @@ let fetcher = require('../../utils/Fetcher.js');
 let util = require('../../utils/util.js');
 let mh = require('../../utils/MediaHelper.js');
 
-let phonePattern = /1[\d]{10,10}$/;
-var app = getApp()
+let phonePattern = /^1[\d]{10,10}$/;
+var app = getApp();
 
 let CreateInitial = {
 
@@ -16,12 +16,13 @@ let CreateInitial = {
    * 页面的初始数据
    */
   data: {
+    invalidId: true,
     create: true,
     errMsg: '',
     debug: false,
     postcard: {
       poster: null,
-      phoneNum: '18516601886',
+      recevierPhone: null,
       id: null,
       audio: null,
       video: null,
@@ -34,7 +35,6 @@ let CreateInitial = {
     let t = this;
     wx.getClipboardData({
       success: function (res) {
-        console.log(res);
         let objc = {
           detail: {
             value: res.data
@@ -48,11 +48,9 @@ let CreateInitial = {
   // 录制视频
   onVideoRecord: function () {
     let t = this;
-    console.log('on video record');
     wx.chooseVideo({
       maxDuration: 15,
       success: function (res) {
-        console.log('upload video');
         wx.showLoading({
           title: '视频上传中',
           mask: true
@@ -60,7 +58,6 @@ let CreateInitial = {
         fetcher.uploadVideo(res.tempFilePath, {
           postcardId: t.data.postcard.id
         }, (res) => {
-          console.log('upload video:', res);
           if (res.code == 0) {
             t.data.postcard.video = res.content.path;
             t.setData({
@@ -95,30 +92,29 @@ let CreateInitial = {
       title: '音频上传中',
       mask: true
     })
-    fetcher.uploadAudio(fp, {
-      postcardId: t.data.postcard.id
-    }, (res) => {
-      console.log('did upload audio:', res);
-      t.data.postcard.audio = res.content.path;
-      t.setData({
-        errMsg: JSON.stringify(res) || '屁都没有',
-        postcard: t.data.postcard
-      });
-      wx.hideLoading();
-    }, (res) => {
-      console.log('zzz:', res);
-      t.setData({
-        errMsg: t.data.errMsg += util.isUndef(res.toString) ? null : res.toString()
-      })
+    fetcher.uploadAudio({
+      filePath: fp,
+      postcardId: t.data.postcard.id,
+      cb: function (res) {
+        if (res.success) {
+          t.data.postcard.audio = res.content.path;
+          t.setData({
+            errMsg: JSON.stringify(res) || '屁都没有',
+            postcard: t.data.postcard
+          });
+        } else {
+          console.log('upload audio failed:', res.msg);
+        }
+        wx.hideLoading();
+      }
     })
   },
 
   tapVoice: function () {
     let t = this;
-    console.log('tap voice:', t.data.postcard.audio);
     mh.playVoice({
       url: t.data.postcard.audio,
-      cb: function(res) {
+      cb: function (res) {
         console.log(res);
       }
     });
@@ -129,8 +125,10 @@ let CreateInitial = {
     let t = this;
     wx.chooseLocation({
       success: function (res) {
-        console.log('loc:', res);
-        t.data.postcard.location = res;
+        let postcard = t.data.postcard;
+        postcard.address = res.name;
+        postcard.longitude = res.longitude;
+        postcard.latitude = res.latitude;
         t.setData({
           postcard: t.data.postcard
         });
@@ -141,8 +139,7 @@ let CreateInitial = {
   // 预览
   onPreview: function () {
 
-    let phone = this.data.postcard.phoneNum || '';
-    console.log('ll:', phone.length, phone.search(phonePattern));
+    let phone = this.data.postcard.recevierPhone || '';
     if (phone.search(phonePattern) < 0) {
       this.showToptip({
         title: '无效的手机号码',
@@ -157,18 +154,15 @@ let CreateInitial = {
   },
 
   onInputPhoneNum: function (objc) {
-    console.log('input:', objc);
     let t = this;
     let value = objc.detail.value;
     let postcard = t.data.postcard;
-    postcard.phoneNum = value;
+    postcard.recevierPhone = value;
     t.setData({
       postcard: postcard
     });
     let ss = value.search(phonePattern);
-    console.log('ss:', ss);
     if (value.length >= 11 && ss < 0) {
-      console.log('无效手机号码');
       t.showToptip({
         title: '无效的手机号码',
         type: 'Warning'
@@ -182,11 +176,20 @@ let CreateInitial = {
   onLoad: function (options) {
     this.recorder_init();
     let t = this;
-    t.data.postcard.id = options.postcardId || 'd576a27a-7e10-4bd2-b4c3-29921d4bdb91';
+    if (!options.id) {
+      t.showToptip({
+        title: '错误的明信片ID',
+        timeout: 20,
+        type: 'Warning'
+      });
+      return;
+    }
+    t.data.postcard.id = options.id;
     t.setData({
+      invalidId: false,
       postcard: t.data.postcard
     });
-    console.log('ErrColor:', t.data);
+
   },
 
   /**
@@ -203,7 +206,7 @@ let CreateInitial = {
     let t = this;
     let postcard = t.data.postcard;
     app.getUserInfo((res) => {
-      console.log('res:', res);
+      console.log('create page, user info:', res);
       postcard.poster = res;
       t.setData({
         postcard: postcard
@@ -215,8 +218,7 @@ let CreateInitial = {
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
-    console.log('animation:', this.animation);
+    
   },
 
   /**

@@ -1,4 +1,25 @@
 <!--sms.wxml-->
+<import src="../../components/TopTip/TopTip.wxml" />
+<template is="TopTip" data="{{...toptip_data}}"></template>
 <view class="sms_container">
-
+  <view class="sms_input_container">
+    <view class="sms_input_cell">
+      <view class="sms_input_left">
+        <text class="sms_input_prompt">手机号码</text>
+        <input class="sms_input_text" placeholder="填写手机号码" placeholder-class="sms_input_text" bindinput="onPhoneInput"/>
+      </view>
+      <view class="sms_input_right">
+        <view class="sms_input_separator" />
+        <view class="sms_input_send_button" bindtap="onSendSms">重新发送(50)</view>
+      </view>
+    </view>
+    <view class="sms_input_cell_separator"></view>
+    <view class="sms_input_cell">
+      <view class="sms_input_left">
+        <text class="sms_input_prompt">验证码</text>
+        <input class="sms_input_text" placeholder="填写手机号码" placeholder-class="sms_input_text" />
+      </view>
+    </view>
+  </view>
+  <button class="sms_next_button" type="primary">下一步</button>
 </view>

@@ -7,6 +7,7 @@
   <block wx:if="{{errMsg && debug}}">
     <text>{{errMsg}}</text>
   </block>
+  <block wx:if='{{!invalidId}}'>
   <view class="classname" wx:if="{{create}}">
     <view class="create_head">
       <view class="cell_container">
@@ -18,7 +19,7 @@
           <view class="cell_head_right">
             <!-- 创建人和日期 -->
             <view class="cell_title_container">
-              <input class="create_phone_input" placeholder="接收人电话号码" value="{{postcard.phoneNum || ''}}" bindinput="onInputPhoneNum" />
+              <input class="create_phone_input" placeholder="接收人电话号码" value="{{postcard.recevierPhone || ''}}" bindinput="onInputPhoneNum" />
             </view>
             <!-- 编辑按钮 -->
             <image class="cell_edit" src="../../assets/paste_normal.png" mode="aspectFit" bindtap="onPaste" />
@@ -43,7 +44,7 @@
         </block>
         <view class="cell_separator" />
         <!-- 位置控件布局 -->
-        <text class="cell_location" bindtap="chooseLocation">{{postcard.location.name || '点击添加位置'}}</text>
+        <text class="cell_location" bindtap="chooseLocation">{{postcard.address || '点击添加位置'}}</text>
       </view>
     </view>
     <!-- 视频、音频录制 -->
@@ -71,4 +72,6 @@
       <template is="recorder" data="{{...recorder_data, zzz: '222'}}"></template>
     </view>
   </scroll-view>
+  </block>
+  
 </view>

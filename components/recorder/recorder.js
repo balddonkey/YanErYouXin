@@ -47,7 +47,6 @@ let config ={
       data.timer = 0;
       t.stopTimer();
       data.timerId = setInterval(() => {
-        console.log('timer');
         let d = t.data.recorder_data;
         d.text = 'zzz';
         d.timer ++;

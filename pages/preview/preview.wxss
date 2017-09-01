@@ -1,6 +1,7 @@
 /* preview.wxss */
 
 @import "../../components/xincell/xincell.wxss";
+@import "../../components/TopTip/TopTip.wxss";
 
 .preview_container {
   display: flex;

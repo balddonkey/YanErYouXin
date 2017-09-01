@@ -2,6 +2,7 @@
 
 let fetcher = require('../../utils/Fetcher.js');
 let xincell = require('../../components/xincell/xincell.js');
+let TopTip = require('../../components/TopTip/TopTip.js');
 
 let util = require('../../utils/util.js');
 
@@ -23,16 +24,20 @@ let PreviewInitial = {
     let postcard = this.data.postcard;
     let params = {
       postcardId: postcard.id,
-      receiverPhone: postcard.phoneNum,
-      address: postcard.location ? postcard.location.name : null,
-      longitudeLatitude: postcard.location ? postcard.location.longitude + ',' + postcard.location.latitude : null
+      receiverPhone: postcard.recevierPhone,
+      address: postcard.address,
+      longitudeLatitude: postcard.longitude && postcard.latitude ? postcard.longitude + ',' + postcard.latitude : null
     };
-    console.log('pp:', params);
     fetcher.create(params, (res) => {
-      console.log('create:', res);
       if (res.success) {
         wx.reLaunch({
           url: '../my/my?type=0',
+        });
+      } else {
+        console.log('创建失败:', res.msg);
+        this.showToptip({
+          title: '创建失败: ' + res.msg,
+          type: 'Warning'
         });
       }
     })
@@ -47,9 +52,8 @@ let PreviewInitial = {
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log('oo:', options);
     let postcard = JSON.parse(options.postcard);
-    postcard.time = util.formatTime(new Date());
+    postcard.createTime = util.formatTime(new Date());
     this.setData({
       postcard: postcard
     });
@@ -107,5 +111,8 @@ let PreviewInitial = {
 
 Object.assign(PreviewInitial, xincell.functions);
 Object.assign(PreviewInitial.data, xincell.data);
+
+Object.assign(PreviewInitial, TopTip.functions);
+Object.assign(PreviewInitial.data, TopTip.data);
 
 Page(PreviewInitial);

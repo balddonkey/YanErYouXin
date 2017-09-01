@@ -1,6 +1,6 @@
 
 <template name='TopTip'>
 <block wx:if='{{title}}'>
-  <view class="toptip_container" style='background-color:{{types[type]}}'>{{title}}</view>
+  <view class="toptip_container" style='background-color:{{types[type] || types["Primary"]}}'>{{title}}</view>
 </block>
 </template>

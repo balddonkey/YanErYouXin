@@ -2,16 +2,15 @@
 let config = {
   data: {
     actionsheet_data: {
-      show: false
+      show: true
     }
   },
 
   functions: {
-    showMWActionSheet: (config) => {
+    showMWActionSheet: function(config) {
       if (!config.itemList || !config.itemList.length) {
         return;
       }
-
       let data = this.data.actionsheet_data;
       data.itemList = config.itemList;
       data.title = config.title;

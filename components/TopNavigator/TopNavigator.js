@@ -18,7 +18,6 @@ let TopNav = {
   },
   functions: {
     selectItem: function (e) {
-      console.log('tn:', e);
       let index = e.currentTarget.dataset.index;
       this.didSelectItem && this.didSelectItem(index);
     }

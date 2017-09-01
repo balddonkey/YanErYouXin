@@ -1,6 +1,6 @@
 <!--repeater.wxml-->
-<import src="../../components/MWActionSheet/MWActionSheet.wxml" />
-<view class="repeater_container" bindtap="onTap">
-{{'params'}}
+<import src="../../components/TopTip/TopTip.wxml" />
+<view class="repeater_container">
+  <template is="TopTip" data="{{...toptip_data}}"></template>
+  <image class="repeater_loading" src="../../assets/ming.png" mode="aspectFit"/>
 </view>
-

@@ -16,6 +16,10 @@ let MyCollectInitial = {
    */
   data: {
     postdatas: [],
+    playAudio: {
+      index: -1,
+      id: null
+    },
     nav_datasource: {
       selectIndex: 2,
       items: [{
@@ -31,9 +35,7 @@ let MyCollectInitial = {
         icon: '../../assets/collect_normal.png',
         selectedIcon: '../../assets/collect_select.png'
       }]
-    },
-    // 滚动动画
-    nav_scroll_animation: null
+    }
   },
 
   didSelectItem: function (index) {
@@ -51,7 +53,6 @@ let MyCollectInitial = {
         return;
         wx.scanCode({
           success: function (res) {
-            console.log('scan result:', res);
             wx.navigateTo({
               url: '../repeater/repeater?params=' + JSON.stringify(res),
             })
@@ -67,11 +68,36 @@ let MyCollectInitial = {
     }
   },
 
+  // 更新Postcard
+  playAudio: function (idx, time) {
+    console.log('SEC', idx, time);
+    let t = this;
+    t.data.playAudio.id && clearInterval(t.data.playAudio.id);
+    let postcards = t.data.postdatas;
+    postcards[idx].percent = 0;
+    let playId = setInterval(() => {
+      postcards[idx].percent += (1.0 / time);
+      console.log('per:', postcards[idx].percent);
+      t.setData({
+        postdatas: postcards
+      });
+      if (postcards[idx].percent >= 1) {
+        t.data.playAudio.id && clearInterval(t.data.playAudio.id);
+      }
+    }, 1 * 1000);
+    t.setData({
+      postdatas: postcards,
+      playAudio: {
+        id: playId,
+        index: idx
+      }
+    });
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log('options:', options);
     wx.setNavigationBarTitle({
       title: '收藏',
     });
@@ -84,16 +110,18 @@ let MyCollectInitial = {
     let t = this;
     fetcher.getFavorList({
       cb: function (res) {
-        console.log('gsl:', res);
-        res.content.map((e) => {
-          return Postcard.postcardFromMeta(e);
-        })
+        console.log('收藏列表:', res);
         if (res.success) {
+          if (res.content && res.content.length) {
+            res.content.map((e) => {
+              return Postcard.postcardFromMeta(e);
+            });
+          }
           t.setData({
             postdatas: res.content
           });
         } else {
-          console.log('获取已发送列表失败，待处理')
+          console.log('获取我的收藏列表失败，待处理')
         }
       }
     });

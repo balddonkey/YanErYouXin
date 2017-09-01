@@ -3,6 +3,7 @@
 /* 导入模板样式 */
 @import "../../components/xincell/xincell.wxss";
 @import "../../components/TopNavigator/TopNavigator.wxss";
+@import "../../components/TopTip/TopTip.wxss";
 
 .my_container {
   width: 100%;

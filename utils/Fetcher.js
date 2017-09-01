@@ -49,13 +49,14 @@ let RepErr = {
   }
 }
 
-let Host = 'https://www.streamind.com/postCard/';
-let Method = 'POST';
+let Config = {
+  Host: 'https://www.streamind.com/postCard/',
+  Public: 'https://www.streamind.com/public/',
+  ThirdSession: null
+}
 
-let preprocessor = (res, additional) => {
-  additional && additional(res);
+let preprocessor = (res) => {
   let code = res.statusCode;
-  console.log('Pre:', res);
   let reqErr = ReqErr[code];
   if (reqErr) {
     res.data = {
@@ -72,13 +73,11 @@ let preprocessor = (res, additional) => {
   }
   // let json = JSON.parse(res.data);
 
-  additional && additional(res.data);
   return res.data;
 }
 
-let Fit = (res, additional) => {
-  res = preprocessor(res, additional);
-  console.log('res:', typeof res);
+let Fit = (res) => {
+  res = preprocessor(res);
   let ret = {
     success: res.code == 0,
     content: res.obj,
@@ -90,18 +89,23 @@ let Fit = (res, additional) => {
         message: res.msg
       }
   };
-  additional && additional(res);
   return ret;
 };
 
 let Api = {
-  Host: Host,
+  thirdSession: null,
+  setThirdSession: function(key) {
+    Config.ThirdSession = key;
+  },
   // 上传视频
   uploadVideo: function (filePath, data, cb) {
-    let url = Host + 'uploadResource/';
+    let url = Config.Host + 'uploadResource/';
     let formData = { type: 2 };
     Object.assign(formData, data);
     wx.uploadFile({
+      header: {
+        '3rd_session': Config.ThirdSession
+      },
       url: url,
       filePath: filePath,
       name: 'file',
@@ -116,32 +120,35 @@ let Api = {
   },
 
   // 上传音频
-  uploadAudio: function (filePath, data, cb, additional) {
-    let url = Host + 'uploadResource/';
-    let formData = { type: 3 };
-    Object.assign(formData, data);
+  uploadAudio: function (data) {
+    let url = Config.Host + 'uploadResource/';
+    let formData = { type: 3, postcardId: data.postcardId };
     wx.uploadFile({
+      header: {
+        '3rd_session': Config.ThirdSession
+      },
       url: url,
-      filePath: filePath,
+      filePath: data.filePath,
       name: 'file',
       formData: formData,
       success: function (res) {
-        cb(Fit(res, additional));
+        data.cb && data.cb(Fit(res));
       },
       fail: function (res) {
-        cb(Fit(res, additional));
+        data.cb && data.cb(Fit(res));
       }
     });
   },
   // 创建明信片
   create: function (data, cb) {
-    let url = Host + 'editPostcardInfo';
+    let url = Config.Host + 'editPostcardInfo';
     wx.request({
       url: url,
       data: data,
       method: 'POST',
       header: {
-        'content-type': 'application/x-www-form-urlencoded'
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
       },
       success: function (res) {
         cb(Fit(res));
@@ -153,35 +160,37 @@ let Api = {
   },
 
   // 获取明信片
-  getPostcard: function (data, cb) {
-    let url = Host + 'getPostcard';
+  getPostcard: function (data) {
+    let url = Config.Host + 'getPostcard';
     wx.request({
       url: url,
       method: 'GET',
       header: {
-        'content-type': 'application/x-www-form-urlencoded'
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
       },
       data: {
-        postcardId: data
+        postcardId: data.postcardId
       },
       success: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       },
       fail: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       }
     });
   },
 
   // 获取私密明信片(加密明信片，需传验证码)
   getPrivacyPostcard: function (data, cb) {
-    let url = Host + 'getPostcardByVerifiCode';
+    let url = Config.Host + 'getPostcardByVerifiCode';
     wx.request({
       url: url,
       data: data,
       method: 'POST',
       header: {
-        'content-type': 'application/x-www-form-urlencoded'
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
       },
       success: function (res) {
         cb(Fit(res));
@@ -193,35 +202,37 @@ let Api = {
   },
 
   // 撤销明信片
-  revocationPostcard: function (data, cb) {
-    let url = Host + 'revocation';
+  revocationPostcard: function (data) {
+    let url = Config.Host + 'revocation';
     wx.request({
       url: url,
       data: {
-        postcardId: data
+        postcardId: data.data
       },
       method: 'POST',
       header: {
-        'content-type': 'application/x-www-form-urlencoded'
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
       },
       success: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       },
       fail: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       }
     });
   },
 
   // 获取我发送的
   getSendList: function(data) {
-    let url = Host + 'getSendList';
+    let url = Config.Host + 'getSendList';
     wx.request({
       url: url,
       data: data.data,
       method: 'GET',
       header: {
-        'content-type': 'application/x-www-form-urlencoded'
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
       },
       success: function(res) {
         data.cb(Fit(res));
@@ -234,13 +245,54 @@ let Api = {
 
   // 获取我收藏的
   getFavorList: function (data) {
-    let url = Host + 'getFavorList';
+    let url = Config.Host + 'getFavorList';
     wx.request({
       url: url,
       data: data.data,
       method: 'GET',
       header: {
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
+      },
+      success: function (res) {
+        data.cb(Fit(res));
+      },
+      fail: function (res) {
+        data.cb(Fit(res));
+      }
+    })
+  },
+
+  // 登录
+  doLogin: function (data) {
+    let url = Config.Public + 'login';
+    console.log('dl:', data);
+    wx.request({
+      url: url,
+      data: data.data,
+      method: 'POST',
+      header: {
         'content-type': 'application/x-www-form-urlencoded'
+      },
+      success: function (res) {
+        data.cb(Fit(res));
+      },
+      fail: function (res) {
+        data.cb(Fit(res));
+      }
+    })
+  },
+
+  // 发送短信
+  sendSms: function (data) {
+    let url = Config.Host + 'sendSms';
+    wx.request({
+      url: url,
+      data: data.data,
+      method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
       },
       success: function (res) {
         data.cb(Fit(res));

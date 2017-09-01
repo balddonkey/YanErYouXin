@@ -1,6 +1,9 @@
 // collect.js
 
+let xincell = require('../../components/xincell/xincell.js');
+
 let util = require('../../utils/util.js');
+let fetcher = require('../../utils/Fetcher.js');
 
 let CollectInitial = {
 
@@ -21,11 +24,23 @@ let CollectInitial = {
     }
   },
 
+  onCollect: function(e) {
+    
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    let postcard = JSON.parse(options.postcard);
+    if (!postcard) {
+      console.log('错误的明信片信息');
+      return;
+    }
+    console.log('collect pp:', options.postcard);
+    this.setData({
+      postcard: postcard
+    });
   },
 
   /**
@@ -77,5 +92,11 @@ let CollectInitial = {
 
   }
 };
+
+
+// 注入模板JS回调
+Object.assign(CollectInitial, xincell.functions);
+// 注入模板data
+Object.assign(CollectInitial.data, xincell.data);
 
 Page(CollectInitial);

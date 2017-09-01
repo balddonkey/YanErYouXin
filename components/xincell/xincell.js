@@ -4,7 +4,8 @@ let mh = require('../../utils/MediaHelper.js');
 let XinCellConfig = {
   data: {
     xincell_data: {
-      host: 'https://www.streamind.com'
+      host: 'https://www.streamind.com',
+      percent: 0
     }
 
     // data sample
@@ -23,27 +24,31 @@ let XinCellConfig = {
 
   delegate: {
     // 点击明信片右上角省略号按钮
-    editPostcard: function(postcard){}
+    editPostcard: function(postcard){},
+
+    playAudio: function(idx, time) {}
   },
 
   functions: {
     // 
     onEdit: function (e) {
-      console.log(e);
-      this.editPostcard && this.editPostcard(e.target.dataset.postcard);
+      let postcard = e.target.dataset.postcard;
+      let index = e.target.dataset.index;
+      this.editPostcard && this.editPostcard(e.target.dataset.postcard, index);
     },
 
     tapVoice: function (e) {
-      console.log('tap voice', e);
       let t = this;
       let data = t.data.xincell_data;
-      let audio = e.currentTarget.dataset.audio;
+      let postcard = e.currentTarget.dataset.postcard;
+      let audio = postcard.audio;
+      let index = e.currentTarget.dataset.index;
       let url = audio;
-      console.log('uu:', url);
       mh.playVoice({
         url: url,
         cb: function(res) {
           console.log('play:', res);
+          typeof t.playAudio == 'function' && t.playAudio(index, 40);
         }
       });
     }

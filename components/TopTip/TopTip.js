@@ -8,6 +8,7 @@ let TopTip = {
     toptip_data: {
       title: null,
       type: 'Primary',
+      timeout: null,
       types: {
         Info: InfoColor,
         Warning: WarnColor,
@@ -28,7 +29,6 @@ let TopTip = {
       clearTimeout(toptip_data.timeout);
 
       let type = data.type || 'Primary';
-      console.log("type:", type);
       toptip_data.type = type;
       toptip_data.title = data.title;
       toptip_data.timeout = setTimeout(() => {
@@ -36,7 +36,7 @@ let TopTip = {
         t.setData({
           toptip_data: toptip_data
         });
-      }, (data.timeout && data.timeout * 1000) || 1.5 * 1000);
+      }, data.timeout ? data.timeout * 1000 : 1.5 * 1000);
       t.setData({
         toptip_data: toptip_data
       });

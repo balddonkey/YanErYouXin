@@ -9,11 +9,16 @@
       <view class="cell_head_right">
         <!-- 创建人和日期 -->
         <view class="cell_title_container">
-          <text class="cell_nickname">{{'暂时没有这个字段'}}</text>
+          <text class="cell_nickname">{{postcard.recevierPhone}}</text>
           <text class="cell_date">{{postcard.createTime}}</text>
         </view>
         <!-- 编辑按钮 -->
-        <image data-postcard="{{postcard}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit"/>
+        <block wx:if='{{postcard.status == 0}}'>
+            <view class="cell_status">已撤回</view> 
+        </block>
+        <block wx:else>
+          <image data-postcard="{{postcard}}" data-index="{{idx}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit"/>
+        </block>
       </view>
     </view>
     <!-- 视频、图片控件布局 -->
@@ -27,15 +32,16 @@
     </view>
     <!-- 音频控件布局 -->
     <block wx:if="{{postcard.audio}}">
-    <view class="cell_audio_container" bindtap="tapVoice" data-audio="{{postcard.audio}}">
-      <image class="cell_audio" src="../../assets/audio_play_normal.png"></image>
+    <view class="cell_audio_container" bindtap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
+      <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
+      <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}" stroke-width="44"></progress>
       <text class="cell_audio_time">40s</text>
     </view>
     </block>
-    <block wx:if="{{postcard.location && postcard.location.name}}">
+    <block wx:if="{{postcard.address}}">
       <view class="cell_separator"/>
       <!-- 位置控件布局 -->
-      <text class="cell_location">{{postcard.location.name}}</text>
+      <text class="cell_location">{{postcard.address}}</text>
     </block>
   </view>
 </template>

@@ -1,1 +1,81 @@
 /* sms.wxss */
+
+@import "../../components/TopTip/TopTip.wxss";
+
+.sms_container {
+  display: block;
+}
+
+.sms_input_container {
+  margin: 20px 0px;
+  width: 100%;
+  background-color: white;
+}
+
+.sms_input_cell {
+  height: 50px;
+  width: 100%;
+  padding: auto 0px;
+  line-height: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 17px;
+}
+
+.sms_input_left {
+  display: flex;
+  flex-direction: row;
+}
+
+.sms_input_prompt {
+  line-height: inherit;
+  height: inherit;
+  margin: 0px 10px;
+  font-size: inherit;
+  width: 70px;
+}
+
+.sms_input_text {
+  line-height: inherit;
+  height: inherit;
+  font-size: inherit;
+  width: auto;
+  max-width: 120px;
+}
+
+.sms_input_right {
+  display: flex;
+  height: 100%;
+  flex-direction: row;
+  width: 110px;
+}
+
+.sms_input_separator {
+  height: 100%;
+  width: 0.8px;
+  background-color: #bbb;
+  opacity: 0.5;
+  margin-right: 0px;
+}
+
+.sms_input_send_button {
+  color: black;
+  line-height: inherit;
+  height: inherit;
+  margin: 0px auto;
+  font-size: inherit;
+  text-align: center;
+  border: none;
+}
+
+.sms_input_cell_separator {
+  margin-left: 10px;
+  height: 0.8px;
+  background-color: #bbb;
+  opacity: 0.5;
+}
+
+.sms_next_button {
+  margin: 20px;
+}

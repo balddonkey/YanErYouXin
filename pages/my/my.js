@@ -3,11 +3,15 @@
 // 明信片模板
 let xincell = require('../../components/xincell/xincell.js');
 let TopNav = require('../../components/TopNavigator/TopNavigator.js');
+let TopTip = require('../../components/TopTip/TopTip.js');
+let login = require('../../utils/login.js');
 
 let util = require('../../utils/util.js');
 let fetcher = require('../../utils/Fetcher.js');
 
 let Postcard = require('../../models/Postcard.js');
+
+let app = getApp();
 
 let MyInitial = {
 
@@ -16,10 +20,14 @@ let MyInitial = {
    */
   data: {
     postdatas: [],
+    playAudio: {
+      index: -1,
+      id: null
+    },
     nav_datasource: {
       selectIndex: 0,
       items: [{
-        title: '发件箱',
+        title: '寄件箱',
         icon: '../../assets/mail_normal.png',
         selectedIcon: '../../assets/mail_select.png'
       }, {
@@ -31,30 +39,20 @@ let MyInitial = {
         icon: '../../assets/collect_normal.png',
         selectedIcon: '../../assets/collect_select.png'
       }]
-    },
-    // 滚动动画
-    nav_scroll_animation: null
+    }
   },
 
   // TopNavigator delegate method
   didSelectItem: function (index) {
-    console.log('did select index:', index);
     switch (index) {
       case 0:
-        wx.redirectTo({
-          url: '../my/my',
-        });
         break;
       case 1:
-        wx.navigateTo({
-          url: '../create/create',
-        });
-        return;
         wx.scanCode({
           success: function (res) {
-            console.log('scan result:', res);
+            let result = JSON.parse(res.result);
             wx.navigateTo({
-              url: '../repeater/repeater?params=' + JSON.stringify(res),
+              url: '../repeater/repeater?id=' + result.id,
             });
           }
         });
@@ -68,47 +66,115 @@ let MyInitial = {
   },
 
   // Xincell delegate method 
-  editPostcard: function(p) {
+  editPostcard: function (p, idx) {
+    let t = this;
     wx.showActionSheet({
-      title: 'zzz',
-      itemList: ['收藏', '取消收藏', '撤回'],
-    })
-  },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    console.log('options:', options);
-    wx.setNavigationBarTitle({
-      title: '发件箱',
+      itemList: ['签收状态', '撤回'],
+      success: function (res) {
+        console.log(res.tapIndex);
+        switch (res.tapIndex) {
+          case 0:
+            break;
+          case 1:
+            fetcher.revocationPostcard({
+              data: p.postcardId,
+              cb: function (res) {
+                if (res.success) {
+                  wx.showToast({
+                    title: '已撤回',
+                  });
+                  let postcards = t.data.postdatas;
+                  postcards[idx].status = 0;
+                  t.setData({
+                    postdatas: postcards
+                  });
+                } else {
+                  t.showToptip({
+                    title: '撤回失败: ' + res.msg,
+                    type: 'Warning'
+                  });
+                }
+              }
+            });
+            break;
+          default:
+            break;
+        }
+      },
+      fail: function (res) {
+        console.log(res);
+      }
     });
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
+  // 更新Postcard
+  playAudio: function (idx, time) {
+    console.log('SEC', idx, time);
+    let t = this;
+    t.data.playAudio.id && clearInterval(t.data.playAudio.id);
+    let postcards = t.data.postdatas;
+    postcards[idx].percent = 0;
+    let playId = setInterval(() => {
+      postcards[idx].percent += (1.0  / time);
+      console.log('per:', postcards[idx].percent);
+      t.setData({
+        postdatas: postcards
+      });
+      if (postcards[idx].percent >= 1) {
+        t.data.playAudio.id && clearInterval(t.data.playAudio.id);
+      }
+    }, 1 * 1000);
+    t.setData({
+      postdatas: postcards,
+      playAudio: {
+        id: playId,
+        index: idx
+      }
+    });
+  },
+
+  onReload: function() {
+
     let t = this;
     fetcher.getSendList({
       cb: function (res) {
         console.log('gsl:', res);
-        res.content.map((e) => {
-          return Postcard.postcardFromMeta(e);
-        })
         if (res.success) {
+          if (res.content && res.content.length) {
+            res.content.map((e) => {
+              return Postcard.postcardFromMeta(e);
+            })
+          }
           t.setData({
             postdatas: res.content
           });
         } else {
           console.log('获取已发送列表失败，待处理')
         }
+        setTimeout(() => {
+          wx.pageScrollTo({
+            scrollTop: 84,
+          });
+        }, 0.25 * 1000);
       }
     });
+  },
 
-    wx.pageScrollTo({
-      scrollTop: 84,
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    wx.setNavigationBarTitle({
+      title: '发件箱'
     });
+
+    this.onReload();
+  },
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
   },
 
   /**
@@ -165,6 +231,10 @@ Object.assign(MyInitial.data, xincell.data);
 Object.assign(MyInitial, TopNav.functions);
 // 注入模板data
 Object.assign(MyInitial.data, TopNav.data);
+
+
+Object.assign(MyInitial, TopTip.functions);
+Object.assign(MyInitial.data, TopTip.data);
 
 Page(MyInitial);
 

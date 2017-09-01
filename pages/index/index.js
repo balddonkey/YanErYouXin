@@ -39,7 +39,6 @@ Page({
           // })
         },
         complete: function (objc) {
-          console.log('record cpt: ', objc);
           t.setData({
             voicePath: objc.tempFilePath,
             isRecording: false
@@ -50,7 +49,6 @@ Page({
         isRecording: true
       });
     }
-    console.log('r: ', this.data.isRecording);
   },
   pressPlay: function() {
     wx.playVoice({
@@ -65,7 +63,6 @@ Page({
     })
   },
   onLoad: function () {
-    console.log('onLoad')
     var that = this
     //调用应用实例的方法获取全局数据
     app.getUserInfo(function(userInfo){
