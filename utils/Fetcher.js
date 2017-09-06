@@ -1,4 +1,6 @@
 
+let SparkMD5 = require('./spark-md5.js');
+
 let ReqErr = {
   400: {
     msg: '请求失败，可能是服务器发生了错误'
@@ -76,6 +78,25 @@ let preprocessor = (res) => {
   return res.data;
 }
 
+let SECRET = 'mingxin!@#$QWER1234';
+function sign(data) {
+  let signature = '';
+  if (data && data !== 'undefined') {
+    let allKeys = Object.keys(data);
+    allKeys.sort();
+    for (let idx in allKeys) {
+      let key = allKeys[idx];
+      signature += key + data[key];
+    }
+  }
+  signature += SECRET;
+  let zz = {
+    zz: signature
+  };
+  signature = SparkMD5.hash(signature);
+  return signature;
+}
+
 let Fit = (res) => {
   res = preprocessor(res);
   let ret = {
@@ -94,27 +115,29 @@ let Fit = (res) => {
 
 let Api = {
   thirdSession: null,
-  setThirdSession: function(key) {
+  setThirdSession: function (key) {
     Config.ThirdSession = key;
   },
   // 上传视频
-  uploadVideo: function (filePath, data, cb) {
+  uploadVideo: function (data) {
     let url = Config.Host + 'uploadResource/';
     let formData = { type: 2 };
-    Object.assign(formData, data);
+    Object.assign(formData, data.data);
+    let signature = sign(formData);
+    formData.signature = signature;
     wx.uploadFile({
       header: {
         '3rd_session': Config.ThirdSession
       },
       url: url,
-      filePath: filePath,
+      filePath: data.filePath,
       name: 'file',
       formData: formData,
       success: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       },
       fail: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       }
     });
   },
@@ -122,7 +145,10 @@ let Api = {
   // 上传音频
   uploadAudio: function (data) {
     let url = Config.Host + 'uploadResource/';
-    let formData = { type: 3, postcardId: data.postcardId };
+    let formData = { type: 3 };
+    Object.assign(formData, data.data);
+    let signature = sign(formData);
+    formData.signature = signature;
     wx.uploadFile({
       header: {
         '3rd_session': Config.ThirdSession
@@ -142,9 +168,13 @@ let Api = {
   // 创建明信片
   create: function (data, cb) {
     let url = Config.Host + 'editPostcardInfo';
+    let params = data || {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
-      data: data,
+      data: params,
       method: 'POST',
       header: {
         'content-type': 'application/x-www-form-urlencoded',
@@ -162,6 +192,12 @@ let Api = {
   // 获取明信片
   getPostcard: function (data) {
     let url = Config.Host + 'getPostcard';
+    let params = {
+      postcardId: data.postcardId
+    };
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
       method: 'GET',
@@ -169,9 +205,7 @@ let Api = {
         'content-type': 'application/x-www-form-urlencoded',
         '3rd_session': Config.ThirdSession
       },
-      data: {
-        postcardId: data.postcardId
-      },
+      data: params,
       success: function (res) {
         data.cb && data.cb(Fit(res));
       },
@@ -182,21 +216,26 @@ let Api = {
   },
 
   // 获取私密明信片(加密明信片，需传验证码)
+  // postcardId, phone, verificationCode
   getPrivacyPostcard: function (data, cb) {
     let url = Config.Host + 'getPostcardByVerifiCode';
+    let params = data.data || {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
-      data: data,
+      data: params,
       method: 'POST',
       header: {
         'content-type': 'application/x-www-form-urlencoded',
         '3rd_session': Config.ThirdSession
       },
       success: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       },
       fail: function (res) {
-        cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       }
     });
   },
@@ -204,11 +243,15 @@ let Api = {
   // 撤销明信片
   revocationPostcard: function (data) {
     let url = Config.Host + 'revocation';
+    let params = {
+      postcardId: data.data
+    };
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
-      data: {
-        postcardId: data.data
-      },
+      data: params,
       method: 'POST',
       header: {
         'content-type': 'application/x-www-form-urlencoded',
@@ -224,20 +267,24 @@ let Api = {
   },
 
   // 获取我发送的
-  getSendList: function(data) {
+  getSendList: function (data) {
     let url = Config.Host + 'getSendList';
+    let params = data.data || {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
-      data: data.data,
+      data: params,
       method: 'GET',
       header: {
         'content-type': 'application/x-www-form-urlencoded',
         '3rd_session': Config.ThirdSession
       },
-      success: function(res) {
+      success: function (res) {
         data.cb(Fit(res));
       },
-      fail: function(res) {
+      fail: function (res) {
         data.cb(Fit(res));
       }
     })
@@ -246,9 +293,13 @@ let Api = {
   // 获取我收藏的
   getFavorList: function (data) {
     let url = Config.Host + 'getFavorList';
+    let params = data.data || {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
-      data: data.data,
+      data: params,
       method: 'GET',
       header: {
         'content-type': 'application/x-www-form-urlencoded',
@@ -266,10 +317,13 @@ let Api = {
   // 登录
   doLogin: function (data) {
     let url = Config.Public + 'login';
-    console.log('dl:', data);
+    let params = data.data || {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
-      data: data.data,
+      data: params,
       method: 'POST',
       header: {
         'content-type': 'application/x-www-form-urlencoded'
@@ -286,19 +340,91 @@ let Api = {
   // 发送短信
   sendSms: function (data) {
     let url = Config.Host + 'sendSms';
+    let params = data.data || {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     wx.request({
       url: url,
-      data: data.data,
+      data: params,
       method: 'POST',
       header: {
         'content-type': 'application/x-www-form-urlencoded',
         '3rd_session': Config.ThirdSession
       },
       success: function (res) {
-        data.cb(Fit(res));
+        data.cb && data.cb(Fit(res));
       },
       fail: function (res) {
-        data.cb(Fit(res));
+        data.cb && data.cb(Fit(res));
+      }
+    })
+  },
+
+  // 收藏
+  favor: function (data) {
+    let url = Config.Host + 'favor';
+    let params = data.data || {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
+    wx.request({
+      url: url,
+      data: params,
+      method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
+      },
+      success: function (res) {
+        data.cb && data.cb(Fit(res));
+      },
+      fail: function (res) {
+        data.cb && data.cb(Fit(res));
+      }
+    })
+  },
+
+  // 取消收藏
+  cancelFavor: function (data) {
+    let url = Config.Host + 'favor';
+    let params = data.data || {};
+    params.cancel = '1';
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
+    wx.request({
+      url: url,
+      data: params,
+      method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
+      },
+      success: function (res) {
+        data.cb && data.cb(Fit(res));
+      },
+      fail: function (res) {
+        data.cb && data.cb(Fit(res));
+      }
+    })
+  },
+
+  checkSession: function (data) {
+    let url = Config.Public + 'checkSession';
+    let header = {
+      'content-type': 'application/x-www-form-urlencoded',
+    };
+    Object.assign(header, data.data);
+    wx.request({
+      url: url,
+      method: 'POST',
+      header: header,
+      success: function (res) {
+        data.cb && data.cb(Fit(res));
+      },
+      fail: function (res) {
+        data.cb && data.cb(Fit(res));
       }
     })
   }

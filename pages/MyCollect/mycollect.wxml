@@ -2,12 +2,14 @@
 <!--我发出的-->
 <import src="../../components/xincell/xincell.wxml" />
 <import src="../../components/TopNavigator/TopNavigator.wxml" />
+<import src="../../components/TopTip/TopTip.wxml" />
 <view class="my_container">
+  <template is="TopTip" data="{{...toptip_data}}"></template>
   <template is="TopNavigator" data="{{nav_datasource}}"></template>
   <block wx:if="{{postdatas && postdatas.length}}">
     <block wx:for="{{postdatas}}" wx:for-index="idx" wx:for-item="postcard" wx:key="id">
       <view class="my_listview">
-        <template is="xincell" data="{{...xincell_data, postcard, idx, playAudio}}" />
+        <template is="xincell" data="{{...xincell_data, postcard, idx, playAudio, cellType}}" />
       </view>
     </block>
   </block>

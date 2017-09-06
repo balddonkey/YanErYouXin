@@ -2,6 +2,8 @@
 let temps = {};
 
 function playVoice(data) {
+  // 添加开始播放回调
+  console.log('warning:', '添加开始播放回调');
   if (temps[data.url]) {
     playLocalVoice({
       filePath: temps[data.url],
@@ -13,6 +15,7 @@ function playVoice(data) {
       success: function(res) {
         playLocalVoice({
           filePath: res.tempFilePath,
+          willStart: data.willStart,
           cb: data.cb
         });
       },
@@ -24,6 +27,8 @@ function playVoice(data) {
 }
 
 function playLocalVoice(data) {
+  console.log('will start play');
+  data.willStart && data.willStart();
   wx.playVoice({
     filePath: data.filePath,
     complete: function (res) {

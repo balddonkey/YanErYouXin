@@ -37,7 +37,8 @@ let RepeaterInitial = {
   },
 
   route: function (p) {
-    if (!p.isuse) {
+    console.log('repeater route:', p);
+    if (p.isuse) {
       wx.redirectTo({
         url: '../collect/collect?postcard=' + JSON.stringify(p),
       });
@@ -48,11 +49,12 @@ let RepeaterInitial = {
     }
   },
 
-  dispose: function (res) {
+  dispose: function () {
     let t = this;
     fetcher.getPostcard({
       postcardId: t.data.id,
       cb: function (res) {
+        console.log('repeater getpsc:', res);
         if (res.success) {
           let postcard = res.content;
           postcard = Postcard.postcardFromMeta(postcard);
@@ -74,7 +76,7 @@ let RepeaterInitial = {
               url: '../sms/sms?id=' + t.data.id,
             });
           } else {
-            this.showToptip({
+            t.showToptip({
               title: res.msg,
               type: 'Warning'
             });
@@ -84,7 +86,8 @@ let RepeaterInitial = {
     });
   },
 
-  route: function(options) {
+  checkParams: function (options) {
+    console.log('repeater check:', options);
     let t = this;
     if (util.isUndef(options) || util.isUndef(options.id)) {
       wx.redirectTo({
@@ -96,10 +99,12 @@ let RepeaterInitial = {
         type: 'Warning'
       });
       return;
+    } else {
+      t.setData({
+        id: options.id
+      });
+      t.dispose();
     }
-    t.setData({
-      id: options.id
-    });
   },
 
   onLogin: function (options) {
@@ -108,7 +113,7 @@ let RepeaterInitial = {
       userdata: t.data.poster,
       success: function (res) {
         console.log('login succ;')
-        t.route(options);
+        t.checkParams(options);
       },
       fail: function (res) {
         this.showToptip({
@@ -139,14 +144,14 @@ let RepeaterInitial = {
         })
       }
     });
-    
+
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (options) {
-
+    wx.showNavigationBarLoading();
   },
 
   /**
@@ -181,13 +186,6 @@ let RepeaterInitial = {
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
 
   }
 };

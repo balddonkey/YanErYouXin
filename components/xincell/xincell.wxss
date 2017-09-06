@@ -26,7 +26,7 @@
   border-radius: 3px;
 }
 
-/* 头部邮编容器样式 */
+/* 头部右边容器样式 */
 .cell_head_right {
   width: 90%;
   display: flex;
@@ -97,15 +97,36 @@
   display: flex;
   width: 100%;
   height: 44px;
-  justify-content: space-between;
   text-align: center;
 }
 
-.cell_audio_process {
-  margin-left: 0px;
+.cell_process_container {
+  display: inline-block;
+  position: relative;
   height: inherit;
   width: 100%;
-  background-color: red;
+  background-color: green;
+}
+/* 进度条 */
+.cell_audio_process {
+  height: inherit;
+  width: 100%;
+}
+
+/* 进度条title */
+.cell_audio_play_title {
+  display: flex;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  flex-direction: column;
+  color: #666;
+  font-size: 16px;
+  /* opacity: 0; */
 }
 
 /* 音频图标样式 */
@@ -117,12 +138,12 @@
 
 /* 音频时间样式 */
 .cell_audio_time {
-  width: auto;
+  width: 44px;
   height: 44px;
   line-height: 44px;
   font-size: 14px;
   color: #888;
-  margin: auto 10px;
+  margin: auto 0px;
 }
 
 /* 位置 */

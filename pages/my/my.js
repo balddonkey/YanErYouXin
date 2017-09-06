@@ -19,6 +19,7 @@ let MyInitial = {
    * 页面的初始数据
    */
   data: {
+    cellType: 0,
     postdatas: [],
     playAudio: {
       index: -1,
@@ -44,13 +45,31 @@ let MyInitial = {
 
   // TopNavigator delegate method
   didSelectItem: function (index) {
+    let t = this;
     switch (index) {
       case 0:
         break;
       case 1:
         wx.scanCode({
           success: function (res) {
-            let result = JSON.parse(res.result);
+            console.log('scan result:', res);
+            let result;
+            try {
+              result = JSON.parse(res.result);
+            } catch (e) {
+              t.showToptip({
+                title: '无效的二维码',
+                type: 'Warning'
+              });
+              return;
+            }
+            if (util.isUndef(result.id)) {
+              t.showToptip({
+                title: '无效的二维码',
+                type: 'Warning'
+              });
+              return;
+            }
             wx.navigateTo({
               url: '../repeater/repeater?id=' + result.id,
             });
@@ -69,13 +88,11 @@ let MyInitial = {
   editPostcard: function (p, idx) {
     let t = this;
     wx.showActionSheet({
-      itemList: ['签收状态', '撤回'],
+      itemList: ['撤回这条明信'],
       success: function (res) {
         console.log(res.tapIndex);
         switch (res.tapIndex) {
           case 0:
-            break;
-          case 1:
             fetcher.revocationPostcard({
               data: p.postcardId,
               cb: function (res) {
@@ -115,7 +132,7 @@ let MyInitial = {
     let postcards = t.data.postdatas;
     postcards[idx].percent = 0;
     let playId = setInterval(() => {
-      postcards[idx].percent += (1.0  / time);
+      postcards[idx].percent += (util.recordTimeInterval  / time);
       console.log('per:', postcards[idx].percent);
       t.setData({
         postdatas: postcards
@@ -123,7 +140,7 @@ let MyInitial = {
       if (postcards[idx].percent >= 1) {
         t.data.playAudio.id && clearInterval(t.data.playAudio.id);
       }
-    }, 1 * 1000);
+    }, util.recordTimeInterval * 1000);
     t.setData({
       postdatas: postcards,
       playAudio: {
@@ -209,13 +226,6 @@ let MyInitial = {
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
 
   }
 

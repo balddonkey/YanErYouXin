@@ -9,7 +9,7 @@
   <block wx:if="{{postdatas && postdatas.length}}">
     <block wx:for="{{postdatas}}" wx:for-index="idx" wx:for-item="postcard" wx:key="id">
       <view class="my_listview">
-        <template is="xincell" data="{{...xincell_data, postcard, idx, playAudio}}" />
+        <template is="xincell" data="{{...xincell_data, postcard, idx, playAudio, cellType}}" />
       </view>
     </block>
   </block>

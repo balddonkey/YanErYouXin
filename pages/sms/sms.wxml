@@ -10,16 +10,18 @@
       </view>
       <view class="sms_input_right">
         <view class="sms_input_separator" />
-        <view class="sms_input_send_button" bindtap="onSendSms">重新发送(50)</view>
+        <view class="sms_input_send_button" bindtap="onSendSms" style="color: {{counting ? '#576b95' : 'black'}}">
+          {{counting ? '重新发送(' + ticktock + ')' : '发送'}}
+        </view>
       </view>
     </view>
     <view class="sms_input_cell_separator"></view>
     <view class="sms_input_cell">
       <view class="sms_input_left">
         <text class="sms_input_prompt">验证码</text>
-        <input class="sms_input_text" placeholder="填写手机号码" placeholder-class="sms_input_text" />
+        <input class="sms_input_text" placeholder="填写手机号码" placeholder-class="sms_input_text" bindinput="onVfcInput"/>
       </view>
     </view>
   </view>
-  <button class="sms_next_button" type="primary">下一步</button>
+  <button class="sms_next_button" type="primary" bindtap="onNext">下一步</button>
 </view>

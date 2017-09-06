@@ -3,6 +3,7 @@
 // 明信片模板
 let xincell = require('../../components/xincell/xincell.js');
 let TopNav = require('../../components/TopNavigator/TopNavigator.js');
+let TopTip = require('../../components/TopTip/TopTip.js');
 
 let util = require('../../utils/util.js');
 let fetcher = require('../../utils/Fetcher.js');
@@ -15,6 +16,7 @@ let MyCollectInitial = {
    * 页面的初始数据
    */
   data: {
+    cellType: 1,
     postdatas: [],
     playAudio: {
       index: -1,
@@ -40,6 +42,7 @@ let MyCollectInitial = {
 
   didSelectItem: function (index) {
     console.log('did select index:', index);
+    let t = this;
     switch (index) {
       case 0:
         wx.redirectTo({
@@ -47,21 +50,31 @@ let MyCollectInitial = {
         });
         break;
       case 1:
-        wx.navigateTo({
-          url: '../create/create',
-        });
-        return;
         wx.scanCode({
           success: function (res) {
+            console.log('scan result:', res);
+            let result;
+            try {
+              result = JSON.parse(res.result);
+            } catch(e) {
+                t.showToptip({
+                  title:'无效的二维码',
+                  type:'Warning'
+                });
+                return;
+            }
+            if (util.isUndef(result.id)) {
+              t.showToptip({
+                title: '无效的二维码',
+                type: 'Warning'
+              });
+              return;
+            }
             wx.navigateTo({
-              url: '../repeater/repeater?params=' + JSON.stringify(res),
-            })
+              url: '../repeater/repeater?id=' + result.id,
+            });
           }
         });
-
-        // wx.navigateTo({
-        //   url: '../create/create',
-        // });
         break;
       case 2:
         break;
@@ -76,7 +89,7 @@ let MyCollectInitial = {
     let postcards = t.data.postdatas;
     postcards[idx].percent = 0;
     let playId = setInterval(() => {
-      postcards[idx].percent += (1.0 / time);
+      postcards[idx].percent += (util.recordTimeInterval / time);
       console.log('per:', postcards[idx].percent);
       t.setData({
         postdatas: postcards
@@ -84,12 +97,58 @@ let MyCollectInitial = {
       if (postcards[idx].percent >= 1) {
         t.data.playAudio.id && clearInterval(t.data.playAudio.id);
       }
-    }, 1 * 1000);
+    }, util.recordTimeInterval * 1000);
     t.setData({
       postdatas: postcards,
       playAudio: {
         id: playId,
         index: idx
+      }
+    });
+  },
+
+  // Xincell delegate method 
+  editPostcard: function (p, idx) {
+    let t = this;
+    wx.showActionSheet({
+      itemList: ['取消收藏这条明信'],
+      success: function (res) {
+        console.log(res.tapIndex);
+        switch (res.tapIndex) {
+          case 0:
+            fetcher.cancelFavor({
+              data: {
+                postcardId: p.postcardId
+              },
+              cb: function(res) {
+                console.log('cancel favor:', res); 
+                if (res.success) {
+                  wx.showToast({
+                    title: '已取消收藏',
+                  });
+                  let postcards = t.data.postdatas;
+                  console.log('delete:', postcards);
+                  postcards.splice(idx, 1);
+                  console.log('deleted:', postcards);
+                  console.log('length:', postcards.length);
+                  t.setData({
+                    postdatas: postcards
+                  });
+                } else {
+                  t.showToptip({
+                    title: '取消收藏失败: ' + res.msg,
+                    type: 'Warning'
+                  });
+                }
+              }
+            })
+            break;
+          default:
+            break;
+        }
+      },
+      fail: function (res) {
+        console.log(res);
       }
     });
   },
@@ -120,6 +179,11 @@ let MyCollectInitial = {
           t.setData({
             postdatas: res.content
           });
+          setTimeout(() => {
+            wx.pageScrollTo({
+              scrollTop: 84,
+            });
+          }, 0.25 * 1000);
         } else {
           console.log('获取我的收藏列表失败，待处理')
         }
@@ -164,13 +228,6 @@ let MyCollectInitial = {
    */
   onReachBottom: function () {
 
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
   }
 
 };
@@ -181,10 +238,18 @@ Object.assign(MyCollectInitial, xincell.functions);
 Object.assign(MyCollectInitial.data, xincell.data);
 
 
+
 // 注入模板JS回调
 Object.assign(MyCollectInitial, TopNav.functions);
 // 注入模板data
 Object.assign(MyCollectInitial.data, TopNav.data);
+
+
+// 注入模板JS回调
+Object.assign(MyCollectInitial, TopTip.functions);
+// 注入模板data
+Object.assign(MyCollectInitial.data, TopTip.data);
+
 
 Page(MyCollectInitial);
 

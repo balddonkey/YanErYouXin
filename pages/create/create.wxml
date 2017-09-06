@@ -8,70 +8,74 @@
     <text>{{errMsg}}</text>
   </block>
   <block wx:if='{{!invalidId}}'>
-  <view class="classname" wx:if="{{create}}">
-    <view class="create_head">
-      <view class="cell_container">
-        <!-- 头部布局 -->
-        <view class="cell_head">
-          <!-- 头像 -->
-          <image class="cell_avatar" src="../../assets/avatar_normal.png" mode="aspectFit" />
-          <!-- 头部右边文字标题 -->
-          <view class="cell_head_right">
-            <!-- 创建人和日期 -->
-            <view class="cell_title_container">
-              <input class="create_phone_input" placeholder="接收人电话号码" value="{{postcard.recevierPhone || ''}}" bindinput="onInputPhoneNum" />
+    <view class="classname" wx:if="{{create}}">
+      <view class="create_head">
+        <view class="cell_container">
+          <!-- 头部布局 -->
+          <view class="cell_head">
+            <!-- 头像 -->
+            <image class="cell_avatar" src="../../assets/avatar_normal.png" mode="aspectFit" />
+            <!-- 头部右边文字标题 -->
+            <view class="cell_head_right">
+              <!-- 创建人和日期 -->
+              <view class="cell_title_container">
+                <input class="create_phone_input" placeholder="接收人电话号码" value="{{postcard.recevierPhone || ''}}" bindinput="onInputPhoneNum" />
+              </view>
+              <!-- 编辑按钮 -->
+              <image class="cell_edit" src="../../assets/paste_normal.png" mode="aspectFit" bindtap="onPaste" />
             </view>
-            <!-- 编辑按钮 -->
-            <image class="cell_edit" src="../../assets/paste_normal.png" mode="aspectFit" bindtap="onPaste" />
           </view>
-        </view>
-        <!-- 视频、图片控件布局 -->
-        <view class="cell_preview_container">
-          <!-- <image class="cell_preview_image" src="../../assets/biantai.gif" mode="aspectFill"/> -->
-          <block wx:if="{{postcard.video}}">
-            <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.video}}" objectFit="fit" />
-          </block>
-          <block wx:else>
-            <image class="cell_preview_image" src="../../assets/scenery.jpg" />
-          </block>
-        </view>
-        <!-- 音频控件布局 -->
-        <block wx:if="{{postcard.audio}}">
-          <view class="cell_audio_container" bindtap="tapVoice" data-item="{{item}}">
-            <image class="cell_audio" src="../../assets/audio_play_normal.png"></image>
-            <text class="cell_audio_time">40s</text>
+          <!-- 视频、图片控件布局 -->
+          <view class="cell_preview_container">
+            <!-- <image class="cell_preview_image" src="../../assets/biantai.gif" mode="aspectFill"/> -->
+            <block wx:if="{{postcard.video}}">
+              <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.video}}" objectFit="fit" />
+            </block>
+            <block wx:else>
+              <image class="cell_preview_image" src="../../assets/scenery.jpg" />
+            </block>
           </view>
-        </block>
-        <view class="cell_separator" />
-        <!-- 位置控件布局 -->
-        <text class="cell_location" bindtap="chooseLocation">{{postcard.address || '点击添加位置'}}</text>
+          <!-- 音频控件布局 -->
+          <block wx:if="{{postcard.audio}}">
+            <view class="cell_audio_container" capture-catch:tap="tapVoice" data-item="{{item}}">
+              <image class="cell_audio" src="../../assets/audio_play_normal.png"></image>
+              <view class="cell_process_container">
+                <progress class="cell_audio_process" percent="{{percent * 100}}" stroke-width="44"></progress>
+                <view class="cell_audio_play_title">点击播放</view>
+              </view>
+              <text class="cell_audio_time">{{postcard.audioDurationStr}}s</text>
+            </view>
+          </block>
+          <view class="cell_separator" />
+          <!-- 位置控件布局 -->
+          <text class="cell_location" bindtap="chooseLocation">{{postcard.address || '点击添加位置'}}</text>
+        </view>
       </view>
+      <!-- 视频、音频录制 -->
+      <view class="select_container">
+        <!-- 录制视频 -->
+        <view class="record_panel" bindtap="onVideoRecord">
+          <image class="record_panel_image" src="../../assets/video_record.png"></image>
+          <text class="record_panel_detail">拍摄一条视频</text>
+          <text class="record_panel_subdetail">不超过15秒</text>
+        </view>
+        <view class="record_panel">
+          <text class="record_panel_text">或</text>
+        </view>
+        <!-- 录制音频 -->
+        <view class="record_panel" bindtap="onAudioRecord">
+          <image class="record_panel_image" src="../../assets/audio_record.png"></image>
+          <text class="record_panel_detail">长按说一段话</text>
+          <text class="record_panel_subdetail">不超过60秒</text>
+        </view>
+      </view>
+      <button class="create_preview_button" type="primary" bindtap="onPreview">预览</button>
     </view>
-    <!-- 视频、音频录制 -->
-    <view class="select_container">
-      <!-- 录制视频 -->
-      <view class="record_panel" bindtap="onVideoRecord">
-        <image class="record_panel_image" src="../../assets/video_record.png"></image>
-        <text class="record_panel_detail">拍摄一条视频</text>
-        <text class="record_panel_subdetail">不超过15秒</text>
+    <scroll-view class="create_scroll" scroll-y="true" wx:if="{{!create}}">
+      <view class="audio_record_panel">
+        <template is="recorder" data="{{...recorder_data, zzz: '222'}}"></template>
       </view>
-      <view class="record_panel">
-        <text class="record_panel_text">或</text>
-      </view>
-      <!-- 录制音频 -->
-      <view class="record_panel" bindtap="onAudioRecord">
-        <image class="record_panel_image" src="../../assets/audio_record.png"></image>
-        <text class="record_panel_detail">长按说一段话</text>
-        <text class="record_panel_subdetail">不超过60秒</text>
-      </view>
-    </view>
-    <button class="create_preview_button" type="primary" bindtap="onPreview">预览</button>
-  </view>
-  <scroll-view class="create_scroll" scroll-y="true" wx:if="{{!create}}">
-    <view class="audio_record_panel">
-      <template is="recorder" data="{{...recorder_data, zzz: '222'}}"></template>
-    </view>
-  </scroll-view>
+    </scroll-view>
   </block>
-  
+
 </view>

@@ -12,31 +12,30 @@ function login(cb) {
     wx.checkSession({
       success: function(res) {
         // 登录态未过期
-        console.log('未过期', third_sessionKey);
-        fetcher.setThirdSession(third_sessionKey);
-        cb.success && cb.success(third_sessionKey);
+
+        checkThirdSessionKey({
+          data: {
+            '3rd_session': third_sessionKey
+          },
+          sessionKey: third_sessionKey,
+          userdata: cb.userdata,
+          success: cb.success,
+          fail: cb.fail
+        });
       },
       fail: function(res) {
         doLogin({
           userdata: cb.userdata,
-          success: function(res) {
-            cb.success && cb.success(res);
-          },
-          fail: function(res) {
-            cb.fail && cb.fail(res);
-          }
+          success: cb.success,
+          fail: cb.fail
         });
       }
     })
   } else {
     doLogin({
       userdata: cb.userdata,
-      success: function (res) {
-        cb.success && cb.success(res);
-      },
-      fail: function (res) {
-        cb.fail && cb.fail(res);
-      }
+      success: cb.success,
+      fail: cb.fail
     });
   }
 }
@@ -46,27 +45,45 @@ function doLogin(data) {
   wx.login({
     success: function(res) {
       console.log('wx.login:', res);
+      // return;
       requestThirdSessionKey({
         data: {
           code: res.code,
           nick: userdata.nickName,
           avatarUrl: userdata.avatarUrl 
         },
-        success: function(res) {
-          data.success && data.success(res);
-        },
-        fail: function(res) {
-          data.fail && data.fail(res);
-        }
+        success: data.success,
+        fail: data.fail
       })
     },
-    fail: function(res) {
-      data.fail && data.fail(res);
+    fail: data.fail
+  })
+}
+
+function checkThirdSessionKey(data) {
+  console.log('checkThirdSessionKey:', data);
+  fetcher.checkSession({
+    data: data.data,
+    cb: function(res) {
+      console.log('checkThirdSessionKey result:', res);
+      if (res.success) {
+        console.log('未过期', data.sessionKey);
+        fetcher.setThirdSession(data.sessionKey);
+        data.success && data.success(data.sessionKey);
+      } else {
+
+        doLogin({
+          userdata: data.userdata,
+          success: data.success,
+          fail: data.fail
+        });
+      }
     }
   })
 }
 
 function requestThirdSessionKey(data) {
+  console.log('rtsk:', data);
   fetcher.doLogin({
     data: data.data,
     cb: function(res) {

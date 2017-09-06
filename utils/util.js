@@ -8,7 +8,7 @@ function formatTime(date) {
   var second = date.getSeconds()
 
 
-  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
+  return [year, month, day].map(formatNumber).join('.')
 }
 
 function formatNumber(n) {
@@ -81,5 +81,13 @@ module.exports = {
   isObject: isObject,
   isPlainObject: isPlainObject,
   isRegExp: isRegExp,
-  isValidArrayIndex: isValidArrayIndex
+  isValidArrayIndex: isValidArrayIndex,
+
+
+  // 配置
+
+  // 录音配置
+  recordTimeInterval: 0.1
 }
+
+// 13646288987

@@ -33,3 +33,15 @@
   height: 64px;
   text-align: center;
 }
+
+.recorder_close {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 55px;
+  height: 55px;
+  font-size: 48px;
+  line-height: 55px;
+  text-align: center;
+  justify-content: center;
+}

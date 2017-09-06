@@ -1,4 +1,7 @@
 // recorder.js
+
+let util = require('../../utils/util.js');
+
 let config ={
 
   /**
@@ -9,6 +12,8 @@ let config ={
       text: null,
       timerId: null,
       timer: 0,
+      timerStr: null,
+      onComplete: false,
       recorder_button_style: {
         bottom: 100,
         cancel: false,
@@ -41,30 +46,25 @@ let config ={
 
       this.animation = animation
     },
-    startTimer: function () {
-      let t = this;
-      let data = t.data.recorder_data;
-      data.timer = 0;
-      t.stopTimer();
-      data.timerId = setInterval(() => {
+    onClose: function() {
+      this.recordClose && this.recordClose();
+    },
+    onRecord: function (start, cancel) {
+      console.log('start:', start, ', cancel:', cancel);
+      if (start) {
+        let t = this;
         let d = t.data.recorder_data;
-        d.text = 'zzz';
-        d.timer ++;
+        d.complete = false;
         t.setData({
           recorder_data: d
         });
-      }, 1 * 1000);
-      t.setData({
-        recorder_data: data
-      });
-    },
-    onRecord: function(start) {
-      if (start) {
-        let t = this;
         wx.startRecord({
-          success: function(res) {
-            let tempFilePath = res.tempFilePath;
-            t.didRecordAudio(tempFilePath);
+          success: function (res) {
+            let tt = this;
+            console.log('zzzzzz:', tt.data);
+            // let dd = tt.data.recorder_data;
+            // console.log('dd:', dd);
+            // dd.complete && tt.didRecordAudio(res.tempFilePath, dd.timer);
           },
           fail: function(res) {
             console.log('record failed:', res);
@@ -74,9 +74,82 @@ let config ={
           }
         })
       } else {
+        let t = this;
+        let data = t.data.recorder_data;
         wx.stopRecord();
+        data.complete = !cancel;
+        t.setData({
+          recorder_data: data
+        });
+        console.log('t.data:', t.data);
       }
     },
+    recordStart: function() {
+      let t = this;
+      let d = t.data.recorder_data;
+      d.complete = false;
+      t.setData({
+        recorder_data: d
+      });
+      wx.startRecord({
+        success: function(res) {
+          t.onRecordDone(res);
+          console.log('record succ');
+        },
+        fail: function(res) {
+          t.showToptip({
+            title: '录音失败:' + res.msg
+          });
+          t.didCancelRecord && t.didCancelRecord();
+          console.log('record fail');
+        }
+      })
+    },
+    onRecordDone: function (res) {
+      let t = this;
+      let d = t.data.recorder_data;
+      console.log('ddddd:', res, d);
+      d.complete && t.didRecordAudio(res.tempFilePath, d.timer);
+    },
+    recordStop: function() {
+      let t = this;
+      let d = t.data.recorder_data;
+      d.complete = true;
+      t.setData({
+        recorder_data: d
+      });
+      wx.stopRecord();
+    },
+    recordCancel: function() {
+      let t = this;
+      let d = t.data.recorder_data;
+      d.complete = false;
+      t.setData({
+        recorder_data: d
+      });
+      wx.stopRecord();
+    },
+    // 计时器开始
+    startTimer: function () {
+      let t = this;
+      let data = t.data.recorder_data;
+      data.timer = 0;
+      data.timerStr = null;
+      t.stopTimer();
+      data.timerId = setInterval(() => {
+        let d = t.data.recorder_data;
+        d.text = 'zzz';
+        d.timer += util.recordTimeInterval;
+        d.timerStr = d.timer.toFixed(1);
+        t.setData({
+          recorder_data: d
+        });
+      }, util.recordTimeInterval * 1000);
+      t.setData({
+        recorder_data: data
+      });
+    },
+    // 计时器关闭
     stopTimer: function() {
       let t = this;
       let data = t.data.recorder_data;
@@ -115,11 +188,11 @@ let config ={
         recorder_data: data
       });
       t.startTimer();
-      t.onRecord(true);
+      t.recordStart();
     },
     // 录音按钮移动回调
     recorder_tap_move: function (obj) {
-      // console.log('move', obj);
+      console.log('move', obj);
       let t = this;
       let touch = obj.changedTouches[0];
       let data = t.data.recorder_data;
@@ -135,19 +208,28 @@ let config ={
     },
     // 录音按钮结束点击回调
     recorder_tap_end: function (obj) {
-      // console.log('end', obj);
+      console.log('end', obj);
       let t = this;
+      let data = t.data.recorder_data;
+      console.log('cancel:', data.recorder_button_style.cancel);
+
+      if (data.recorder_button_style.cancel) {
+        t.recordCancel();
+      } else {
+        t.recordStop();
+      }
+      t.stopTimer();
+
+      // Reset Recorder Button
       t.recorder_button_animator((d) => {
         d.recorder_button_style.cancel = false;
         t.animation.bottom(d.recorder_button_style.bottom).scale(1).step({ duration: 0.25 * 1000 })
         return t.animation.export();
       });
-      t.stopTimer();
-      t.onRecord(false);
     },
     // 录音按钮取消点击回调
     recorder_tap_cancel: function (obj) {
-      // console.log('cancel', obj);
+      console.log('cancel', obj);
       let t = this;
       t.recorder_button_animator((d) => {
         d.recorder_button_style.cancel = false;
@@ -155,7 +237,7 @@ let config ={
         return t.animation.export();
       });
       t.stopTimer();
-      t.onRecord(false);
+      t.recordCancel();
     }
   }
 }

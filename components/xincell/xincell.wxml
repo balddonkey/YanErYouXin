@@ -4,20 +4,21 @@
     <!-- 头部布局 -->
     <view class="cell_head">
       <!-- 头像 -->
-      <image class="cell_avatar" src="{{postcard.poster.avatarUrl || '../../assets/avatar_normal.png'}}" mode="aspectFit"/>
+      <image class="cell_avatar" src="{{cellType == 0 ? (postcard.receiverAvatarUrl || '../../assets/avatar_normal.png') : (postcard.senderAvatarUrl || '../../assets/avatar_normal.png')}}" mode="aspectFit"/>
       <!-- 头部右边文字标题 -->
       <view class="cell_head_right">
         <!-- 创建人和日期 -->
         <view class="cell_title_container">
-          <text class="cell_nickname">{{postcard.recevierPhone}}</text>
-          <text class="cell_date">{{postcard.createTime}}</text>
+          <text class="cell_nickname">{{cellType == 0 ? (postcard.receiverNick || postcard.recevierPhone) : (postcard.senderNick || '未知')}}</text>
+          <text class="cell_date">{{postcard.createTimeStr}}{{showReceiveStatus ? (postcard.signForTime ? ' 已签收' : ' 等待签收') : '' }}</text>
         </view>
-        <!-- 编辑按钮 -->
-        <block wx:if='{{postcard.status == 0}}'>
+        <block wx:if='{{collect == 0}}'>
+          <block wx:if='{{postcard.status == 0}}'>
             <view class="cell_status">已撤回</view> 
-        </block>
+          </block>
         <block wx:else>
           <image data-postcard="{{postcard}}" data-index="{{idx}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit"/>
+        </block>
         </block>
       </view>
     </view>
@@ -32,13 +33,18 @@
     </view>
     <!-- 音频控件布局 -->
     <block wx:if="{{postcard.audio}}">
-    <view class="cell_audio_container" bindtap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
+    <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
       <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
-      <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}" stroke-width="44"></progress>
-      <text class="cell_audio_time">40s</text>
+       
+      <view class="cell_process_container">
+        <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}" stroke-width="44">
+        </progress>
+        <view class="cell_audio_play_title" >点击播放</view>
+      </view>
+      <text class="cell_audio_time">{{postcard.audioDurationStr}}s</text>
     </view>
     </block>
-    <block wx:if="{{postcard.address}}">
+    <block wx:if="{{postcard.address !== null && postcard.address !== 'undefined' && postcard.address.length}}">
       <view class="cell_separator"/>
       <!-- 位置控件布局 -->
       <text class="cell_location">{{postcard.address}}</text>

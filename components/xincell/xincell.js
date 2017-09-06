@@ -1,9 +1,14 @@
 // xincell.js
 
 let mh = require('../../utils/MediaHelper.js');
+
+// cellType: 0: 显示接受者, 1: 发送者
+// collect: 0: 不在收藏页, 1: 在收藏页
 let XinCellConfig = {
   data: {
     xincell_data: {
+      collect: 0,
+      showReceiveStatus: true,
       host: 'https://www.streamind.com',
       percent: 0
     }
@@ -46,9 +51,11 @@ let XinCellConfig = {
       let url = audio;
       mh.playVoice({
         url: url,
+        willStart: function() {
+          typeof t.playAudio == 'function' && t.playAudio(index, postcard.audioDuration);
+        },
         cb: function(res) {
           console.log('play:', res);
-          typeof t.playAudio == 'function' && t.playAudio(index, 40);
         }
       });
     }

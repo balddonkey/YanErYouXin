@@ -4,8 +4,8 @@
 <view class="preview_container">
   <template is="TopTip" data="{{...toptip_data}}"></template>
   <view class="preview_head">
-    <template is="xincell" data="{{postcard}}" />
+    <template is="xincell" data="{{postcard, cellType, showReceiveStatus}}" />
   </view>
   <button class="preview_add_collect" type="primary" bindtap="onSend">发送</button>
-  <button class="preview_add_collect" bindtap="onEdit">返回编辑</button>
+  <button class="preview_add_collect" bindtap="onReturnToEdit">返回编辑</button>
 </view>

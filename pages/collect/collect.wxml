@@ -2,9 +2,13 @@
 <!--收藏-->
 <import src="../../components/xincell/xincell.wxml" />
 <import src="../../components/TopNavigator/TopNavigator.wxml" />
+<import src="../../components/TopTip/TopTip.wxml" />
+  <template is="TopTip" data="{{...toptip_data}}"></template>
 <view class="preview_container">
-    <view class="preview_head">
-      <template is="xincell" data="{{postcard}}" bindtap="tapVoice" />
-    </view>
+  <view class="preview_head">
+    <template is="xincell" data="{{postcard, cellType, collect}}" bindtap="tapVoice" />
+  </view>
+  <block wx:if='{{!postcard.isFavor}}'>
     <button class="preview_add_collect" type="primary" bindtap="onCollect">添加到收藏</button>
+  </block>
 </view>

@@ -4,10 +4,10 @@
 
 .sms_container {
   display: block;
+  padding: 20px 0px;
 }
 
 .sms_input_container {
-  margin: 20px 0px;
   width: 100%;
   background-color: white;
 }

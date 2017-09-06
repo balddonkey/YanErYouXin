@@ -20,11 +20,15 @@ let CreateInitial = {
     create: true,
     errMsg: '',
     debug: false,
+    playbackId: null,
+    percent: 0,
     postcard: {
       poster: null,
       recevierPhone: null,
       id: null,
       audio: null,
+      audioDuration: 0,
+      audioDurationStr: null,
       video: null,
       location: null
     }
@@ -55,17 +59,22 @@ let CreateInitial = {
           title: '视频上传中',
           mask: true
         });
-        fetcher.uploadVideo(res.tempFilePath, {
-          postcardId: t.data.postcard.id
-        }, (res) => {
-          if (res.code == 0) {
-            t.data.postcard.video = res.content.path;
-            t.setData({
-              postcard: t.data.postcard
-            });
+        fetcher.uploadVideo({
+          filePath: res.tempFilePath, 
+          data: {
+            postcardId: t.data.postcard.id
+          }, 
+          cb:(res) => {
+            if (res.code == 0) {
+              t.data.postcard.video = res.content.path;
+              t.setData({
+                postcard: t.data.postcard
+              });
+            }
+            wx.hideLoading();
           }
-          wx.hideLoading();
-        });
+        }
+        );
       },
       fail: function (res) {
 
@@ -83,19 +92,30 @@ let CreateInitial = {
     });
   },
 
-  didRecordAudio: function (fp) {
+  didRecordAudio: function (fp, duration) {
+    duration = parseFloat(duration.toFixed(2));
+    console.log('fp and duration:', fp, duration);
     let t = this;
+    let postcard = t.data.postcard;
+    postcard.audioDuration = duration;
+    postcard.audioDurationStr = duration.toFixed(0);
     t.setData({
-      create: true
+      create: true,
+      postcard: postcard
     });
+    console.log('duration:', postcard);
     wx.showLoading({
       title: '音频上传中',
       mask: true
-    })
+    });
     fetcher.uploadAudio({
+      data: {
+        postcardId: t.data.postcard.id,
+        duration: postcard.audioDurationStr
+      },
       filePath: fp,
-      postcardId: t.data.postcard.id,
       cb: function (res) {
+        console.log('upload audio done:', res);
         if (res.success) {
           t.data.postcard.audio = res.content.path;
           t.setData({
@@ -110,14 +130,61 @@ let CreateInitial = {
     })
   },
 
+  // Recorder delegate method
+  recordClose: function() {
+    let t = this;
+    t.setData({
+      create: true
+    });
+  },
+
   tapVoice: function () {
     let t = this;
+
     mh.playVoice({
       url: t.data.postcard.audio,
+      willStart: function() {
+        t.playback();
+      },
       cb: function (res) {
         console.log(res);
       }
     });
+  },
+
+  playback: function () {
+    let t = this;
+    if (t.data.playbackId) {
+      t.playbackStop();
+      // return;
+    }
+    console.log('t.p:', t.data.postcard);
+    let duration = t.data.postcard.audioDuration;
+    let time = 0;
+    t.data.playbackId = setInterval(() => {
+      time += util.recordTimeInterval;
+      t.data.percent = time / duration;
+      console.log('ttt:', time, 'percent:', t.data.percent);
+      t.setData({
+        percent: t.data.percent
+      });
+      if (time >= duration) {
+        t.playbackStop();
+      }
+    }, util.recordTimeInterval * 1000);
+    t.setData({
+      playbackId: t.data.playbackId
+    });
+  },
+
+  playbackStop: function () {
+    let t = this;
+    let postcard = t.data.postcard;
+    // wx.stopVoice();
+    if (t.data.playbackId) {
+      clearInterval(t.data.playbackId);
+      t.data.playbackId = null;
+    }
   },
 
   // 选择位置信息
@@ -218,7 +285,7 @@ let CreateInitial = {
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
+
   },
 
   /**
@@ -246,13 +313,6 @@ let CreateInitial = {
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
 
   }
 }
