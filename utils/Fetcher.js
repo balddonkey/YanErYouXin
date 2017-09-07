@@ -415,9 +415,14 @@ let Api = {
     let header = {
       'content-type': 'application/x-www-form-urlencoded',
     };
+    let params = {};
+    // 签名
+    let signature = sign(params);
+    params.signature = signature;
     Object.assign(header, data.data);
     wx.request({
       url: url,
+      data: params,
       method: 'POST',
       header: header,
       success: function (res) {

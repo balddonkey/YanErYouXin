@@ -106,6 +106,9 @@ let CollectInitial = {
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    wx.setNavigationBarTitle({
+      title: '查看'
+    });
     let postcard = JSON.parse(options.postcard);
     if (!postcard) {
       console.log('错误的明信片信息');

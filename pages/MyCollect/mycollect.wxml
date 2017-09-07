@@ -14,8 +14,8 @@
     </block>
   </block>
   <block wx:else>
-    <view class="my_empty_container">
-      <text>没有已收藏的明信片</text>
+    <view class="my_empty_container" bindtap="onScanQRCode">
+      <text>收藏夹什么也没有</text>
     </view>
   </block>
 </view>

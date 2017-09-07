@@ -25,7 +25,7 @@ let MyCollectInitial = {
     nav_datasource: {
       selectIndex: 2,
       items: [{
-        title: '发件箱',
+        title: '寄件箱',
         icon: '../../assets/mail_normal.png',
         selectedIcon: '../../assets/mail_select.png'
       }, {
@@ -33,7 +33,7 @@ let MyCollectInitial = {
         icon: '../../assets/scan_normal.png',
         selectedIcon: '../../assets/scan_select.png'
       }, {
-        title: '收藏',
+        title: '收藏夹',
         icon: '../../assets/collect_normal.png',
         selectedIcon: '../../assets/collect_select.png'
       }]
@@ -50,35 +50,40 @@ let MyCollectInitial = {
         });
         break;
       case 1:
-        wx.scanCode({
-          success: function (res) {
-            console.log('scan result:', res);
-            let result;
-            try {
-              result = JSON.parse(res.result);
-            } catch(e) {
-                t.showToptip({
-                  title:'无效的二维码',
-                  type:'Warning'
-                });
-                return;
-            }
-            if (util.isUndef(result.id)) {
-              t.showToptip({
-                title: '无效的二维码',
-                type: 'Warning'
-              });
-              return;
-            }
-            wx.navigateTo({
-              url: '../repeater/repeater?id=' + result.id,
-            });
-          }
-        });
+        t.onScanQRCode();
         break;
       case 2:
         break;
     }
+  },
+
+  onScanQRCode: function () {
+    let t = this;
+    wx.scanCode({
+      success: function (res) {
+        console.log('scan result:', res);
+        let result;
+        try {
+          result = JSON.parse(res.result);
+        } catch (e) {
+          t.showToptip({
+            title: '无效的二维码',
+            type: 'Warning'
+          });
+          return;
+        }
+        if (util.isUndef(result.id)) {
+          t.showToptip({
+            title: '无效的二维码',
+            type: 'Warning'
+          });
+          return;
+        }
+        wx.navigateTo({
+          url: '../repeater/repeater?id=' + result.id,
+        });
+      }
+    });
   },
 
   // 更新Postcard
@@ -158,7 +163,7 @@ let MyCollectInitial = {
    */
   onLoad: function (options) {
     wx.setNavigationBarTitle({
-      title: '收藏',
+      title: '收藏夹',
     });
   },
 

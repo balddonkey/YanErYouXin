@@ -100,6 +100,9 @@ let PreviewInitial = {
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    wx.setNavigationBarTitle({
+      title: '预览'
+    });
     console.log('on preview:', options);
     let postcard = JSON.parse(options.postcard);
     postcard.createTime = util.formatTime(new Date());

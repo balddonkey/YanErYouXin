@@ -14,8 +14,8 @@
     </block>
   </block>
   <block wx:else>
-    <view class="my_empty_container">
-      <text>没有已发送的明信片</text>
+    <view class="my_empty_container" bindtap="onScanQRCode">
+      <text>这里空空的，给你的朋友寄张明信吧</text>
     </view>
   </block>
 </view>

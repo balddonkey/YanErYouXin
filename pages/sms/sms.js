@@ -148,6 +148,9 @@ let SmsInitial = {
    */
   onLoad: function (options) {
     console.log('sms:', options);
+    wx.setNavigationBarTitle({
+      title: '验证'
+    });
     this.setData({
       id: options.id
     });

@@ -4,7 +4,6 @@
     "pages/my/my",
     "pages/collect/collect",
     "pages/create/create",
-    "pages/logs/logs",
     "pages/preview/preview",
     "pages/sms/sms",
     "pages/MyCollect/mycollect"

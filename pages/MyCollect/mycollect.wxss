@@ -17,7 +17,9 @@
 
 .my_empty_container {
   width: 100%;
-  margin-top: 150px;
+  margin-top: 100px;
+  height: 200px;
+  line-height: 200px;
   text-align: center;
   color: #bbb;
   font-size: 17px;
