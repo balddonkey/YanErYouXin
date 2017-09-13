@@ -22,7 +22,6 @@ App({
           typeof cb.success == "function" && cb.success(that.globalData.userInfo)
         },
         fail: function(res) {
-          console.log('get ui fail:', res);
           typeof cb.fail == "function" && cb.fail(res)
         }
       })

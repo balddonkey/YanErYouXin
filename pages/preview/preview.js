@@ -21,20 +21,28 @@ let PreviewInitial = {
 
   // 发送
   onSend: function () {
+    let t = this;
     let postcard = this.data.postcard;
+    console.log('create:', postcard);
     let params = {
       postcardId: postcard.id,
-      receiverPhone: postcard.recevierPhone,
       address: postcard.address,
       longitudeLatitude: postcard.longitude && postcard.latitude ? postcard.longitude + ',' + postcard.latitude : null
     };
+    postcard.receiverPhone && (params.receiverPhone = postcard.receiverPhone);
     fetcher.create(params, (res) => {
+      console.log('create type is 0?', postcard.cardType == 0);
       if (res.success) {
-        wx.reLaunch({
-          url: '../my/my?type=0',
-        });
+        if (postcard.cardType == 0) {
+          wx.reLaunch({
+            url: '../my/my',
+          });
+        } else {
+          wx.reLaunch({
+            url: '../MyCollect/mycollect',
+          });
+        }
       } else {
-        console.log('创建失败:', res.msg);
         this.showToptip({
           title: '创建失败: ' + res.msg,
           type: 'Warning'
@@ -42,15 +50,21 @@ let PreviewInitial = {
       }
     })
   },
+  
+  onShowLocation: function (p, idx) {
+    wx.openLocation({
+      latitude: p.latitude,
+      longitude: p.longitude,
+    })
+  },
+
 
   // 返回编辑
   onReturnToEdit: function() {
-    console.log('onReturnToEdit');
     wx.navigateBack();
   },
 
   playAudio: function(idx, duration) {
-    console.log('ppppp');
     this.playback();
   },
 
@@ -60,20 +74,12 @@ let PreviewInitial = {
       t.playbackStop();
       // return;
     }
-    // mh.playVoice({
-    //   url: t.data.postcard.audio,
-    //   cb: function (res) {
-    //     console.log(res);
-    //   }
-    // });
-    console.log('t.p:', t.data.postcard);
     let postcard = t.data.postcard;
-    let duration = t.data.postcard.audioDuration;
+    let duration = t.data.postcard.resource.duration;
     let time = 0;
     t.data.playbackId = setInterval(() => {
       time += util.recordTimeInterval;
       postcard.percent = time / duration;
-      console.log('ttt:', time, 'percent:', postcard.percent);
       t.setData({
         postcard: postcard
       });
@@ -101,12 +107,14 @@ let PreviewInitial = {
    */
   onLoad: function (options) {
     wx.setNavigationBarTitle({
-      title: '预览'
+      title: options.createType == 0 ? '预览' : '收藏'
     });
     console.log('on preview:', options);
     let postcard = JSON.parse(options.postcard);
     postcard.createTime = util.formatTime(new Date());
     postcard.createTimeStr = postcard.createTime;
+    postcard.cardType = options.createType;
+    console.log('preview data:', postcard);
     this.setData({
       postcard: postcard
     });

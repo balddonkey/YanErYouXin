@@ -172,6 +172,7 @@ let Api = {
     // 签名
     let signature = sign(params);
     params.signature = signature;
+    console.log('create params:', params);
     wx.request({
       url: url,
       data: params,
@@ -189,9 +190,32 @@ let Api = {
     });
   },
 
+  getPreset: function(data) {
+    let url = Config.Host + 'getPresetInfo';
+    let params = data.data;
+    let signature = sign(params);
+    params.signature = signature;
+    wx.request({
+      url: url,
+      method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded',
+        '3rd_session': Config.ThirdSession
+      },
+      data: params,
+      success: function(res) {
+        data.cb && data.cb(Fit(res));
+      },
+      fail: function(res) {
+        data.cb && data.cb(Fit(res));
+      }
+    })
+  },
+
   // 获取明信片
   getPostcard: function (data) {
-    let url = Config.Host + 'getPostcard';
+    console.log('get postcard:', data);
+    let url = Config.Host + 'signForPostcard';
     let params = {
       postcardId: data.postcardId
     };
@@ -218,7 +242,7 @@ let Api = {
   // 获取私密明信片(加密明信片，需传验证码)
   // postcardId, phone, verificationCode
   getPrivacyPostcard: function (data, cb) {
-    let url = Config.Host + 'getPostcardByVerifiCode';
+    let url = Config.Host + 'signForPostcardByVerifiCode';
     let params = data.data || {};
     // 签名
     let signature = sign(params);

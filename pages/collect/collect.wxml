@@ -6,7 +6,7 @@
   <template is="TopTip" data="{{...toptip_data}}"></template>
 <view class="preview_container">
   <view class="preview_head">
-    <template is="xincell" data="{{postcard, cellType, collect}}" bindtap="tapVoice" />
+    <template is="{{postcard.cardType == 0 ? 'xincell' : 'xincell_map'}}" data="{{...xincell_data, postcard, cellType, collect}}" bindtap="tapVoice" />
   </view>
   <block wx:if='{{!postcard.isFavor}}'>
     <button class="preview_add_collect" type="primary" bindtap="onCollect">添加到收藏</button>

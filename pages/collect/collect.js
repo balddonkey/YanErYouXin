@@ -39,7 +39,6 @@ let CollectInitial = {
         postcardId: postcard.postcardId
       },
       cb: function(res) {
-        console.log('collec:', res);
         if (res.success) {
           t.showToptip({
             timeout: 3,
@@ -57,7 +56,6 @@ let CollectInitial = {
   },
 
   playAudio: function (idx, duration) {
-    console.log('ppppp');
     this.playback();
   },
 
@@ -67,20 +65,13 @@ let CollectInitial = {
       t.playbackStop();
       // return;
     }
-    // mh.playVoice({
-    //   url: t.data.postcard.audio,
-    //   cb: function (res) {
-    //     console.log(res);
-    //   }
-    // });
-    console.log('t.p:', t.data.postcard);
+    
     let postcard = t.data.postcard;
-    let duration = t.data.postcard.audioDuration;
+    let duration = t.data.postcard.resource.duration;
     let time = 0;
     t.data.playbackId = setInterval(() => {
       time += util.recordTimeInterval;
       postcard.percent = time / duration;
-      console.log('ttt:', time, 'percent:', postcard.percent);
       t.setData({
         postcard: postcard
       });
@@ -114,7 +105,6 @@ let CollectInitial = {
       console.log('错误的明信片信息');
       return;
     }
-    console.log('collect pp:', options.postcard);
     this.setData({
       postcard: Postcard.postcardFromMeta(postcard)
     });
@@ -171,9 +161,9 @@ let CollectInitial = {
     let nickName = app.globalData.userInfo.nickName;
     let config = {
       title: nickName ? nickName + ' 转发的明信片' : null,
-      path: '/pages/repeater/repeater?id=' + t.data.postcard.postcardId
+      path: '/pages/repeater/repeater?scene=' + t.data.postcard.cardType + '$' + t.data.postcard.postcardId
     };
-    console.log('app data:',app.globalData, '\nconfig:', config);
+    console.log('share config:', config);
     return config;
   }
 };

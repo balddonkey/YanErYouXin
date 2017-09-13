@@ -1,0 +1,61 @@
+<!--pages/mapcreate/mapcreate.wxml-->
+<import src="../../components/recorder/recorder.wxml" />
+<import src="../../components/TopTip/TopTip.wxml" />
+
+<view class="create_container">
+  <template is="TopTip" data="{{...toptip_data}}"></template>
+  <block wx:if="{{errMsg && debug}}">
+    <text>{{errMsg}}</text>
+  </block>
+  <block wx:if='{{!invalidId}}'>
+    <scroll-view class="create_scroll" scroll-x>
+
+      <view class="classname" wx:if="{{create}}">
+        <view class="create_head">
+          <view class="cell_container">
+            <!-- 头部布局 -->
+            <view class="cell_head_map">
+              <!-- 头像 -->
+              <!-- 头部右边文字标题 -->
+              <view class="cell_head_right">
+                <!-- 创建人和日期 -->
+                <text class="cell_single_title">{{preset.scenicSpot || '未知'}}</text>
+              </view>
+            </view>
+            <!-- 视频、图片控件布局 -->
+            <view class="cell_preview_container" style='height: {{previewHeight + "px"}}'>
+              <!-- <image class="cell_preview_image" src="../../assets/biantai.gif" mode="aspectFill"/> -->
+              <image class="cell_preview_image" src="{{postcard.coverPicture || null}}" />
+            </view>
+            <view class="cell_separator" />
+            <!-- 位置控件布局 -->
+            <text class="cell_location" bindtap="chooseLocation">{{postcard.address || '点击添加位置'}}</text>
+          </view>
+        </view>
+        <!-- 视频、音频录制 -->
+        <view class="select_container" style='height: {{bottomHeight + "px"}}'>
+          <!-- 录制视频 -->
+          <view class="record_panel" bindtap="onVideoRecord">
+            <image class="record_panel_image" src="../../assets/video_record.png"></image>
+            <text class="record_panel_detail">拍摄一条视频</text>
+            <text class="record_panel_subdetail">不超过15秒</text>
+          </view>
+          <view class="record_panel_thin">
+            <text class="record_panel_text">或</text>
+          </view>
+          <!-- 录制音频 -->
+          <view class="record_panel" bindtap="onAudioRecord">
+            <image class="record_panel_image" src="../../assets/audio_record.png"></image>
+            <text class="record_panel_detail">长按说一段话</text>
+            <text class="record_panel_subdetail">不超过60秒</text>
+          </view>
+        </view>
+        <!-- <button class="create_preview_button" type="primary" bindtap="onPreview">预览</button> -->
+      </view>
+
+      <view class="audio_record_panel" wx:if="{{!create}}">
+        <template is="recorder" data="{{...recorder_data, zzz: '222'}}"></template>
+      </view>
+    </scroll-view>
+  </block>
+</view>

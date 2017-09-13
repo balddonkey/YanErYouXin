@@ -41,7 +41,6 @@ let MyCollectInitial = {
   },
 
   didSelectItem: function (index) {
-    console.log('did select index:', index);
     let t = this;
     switch (index) {
       case 0:
@@ -62,17 +61,8 @@ let MyCollectInitial = {
     wx.scanCode({
       success: function (res) {
         console.log('scan result:', res);
-        let result;
-        try {
-          result = JSON.parse(res.result);
-        } catch (e) {
-          t.showToptip({
-            title: '无效的二维码',
-            type: 'Warning'
-          });
-          return;
-        }
-        if (util.isUndef(result.id)) {
+        // res.scanType != 'WX_CODE' ||   Android有bug，扫描小程序码返回QR_CODE
+        if (util.isUndef(res.path)) {
           t.showToptip({
             title: '无效的二维码',
             type: 'Warning'
@@ -80,7 +70,13 @@ let MyCollectInitial = {
           return;
         }
         wx.navigateTo({
-          url: '../repeater/repeater?id=' + result.id,
+          url: '/' + res.path,
+        });
+      },
+      fail: function (res) {
+        t.showToptip({
+          title: '识别失败',
+          type: 'Warning'
         });
       }
     });
@@ -88,14 +84,12 @@ let MyCollectInitial = {
 
   // 更新Postcard
   playAudio: function (idx, time) {
-    console.log('SEC', idx, time);
     let t = this;
     t.data.playAudio.id && clearInterval(t.data.playAudio.id);
     let postcards = t.data.postdatas;
     postcards[idx].percent = 0;
     let playId = setInterval(() => {
       postcards[idx].percent += (util.recordTimeInterval / time);
-      console.log('per:', postcards[idx].percent);
       t.setData({
         postdatas: postcards
       });
@@ -112,13 +106,19 @@ let MyCollectInitial = {
     });
   },
 
-  // Xincell delegate method 
+  // Xincell delegate method  
+  onShowLocation: function (p, idx) {
+    wx.openLocation({
+      latitude: p.latitude,
+      longitude: p.longitude,
+    })
+  },
+
   editPostcard: function (p, idx) {
     let t = this;
     wx.showActionSheet({
       itemList: ['取消收藏这条明信'],
       success: function (res) {
-        console.log(res.tapIndex);
         switch (res.tapIndex) {
           case 0:
             fetcher.cancelFavor({
@@ -126,16 +126,12 @@ let MyCollectInitial = {
                 postcardId: p.postcardId
               },
               cb: function(res) {
-                console.log('cancel favor:', res); 
                 if (res.success) {
                   wx.showToast({
                     title: '已取消收藏',
                   });
                   let postcards = t.data.postdatas;
-                  console.log('delete:', postcards);
                   postcards.splice(idx, 1);
-                  console.log('deleted:', postcards);
-                  console.log('length:', postcards.length);
                   t.setData({
                     postdatas: postcards
                   });
@@ -174,7 +170,6 @@ let MyCollectInitial = {
     let t = this;
     fetcher.getFavorList({
       cb: function (res) {
-        console.log('收藏列表:', res);
         if (res.success) {
           if (res.content && res.content.length) {
             res.content.map((e) => {

@@ -16,6 +16,7 @@ let RepeaterInitial = {
    * 页面的初始数据
    */
   data: {
+    collect: 1,
     msg: null,
     video: null,
     audio: null
@@ -37,7 +38,6 @@ let RepeaterInitial = {
   },
 
   route: function (p) {
-    console.log('repeater route:', p);
     if (p.isuse) {
       wx.redirectTo({
         url: '../collect/collect?postcard=' + JSON.stringify(p),
@@ -54,7 +54,6 @@ let RepeaterInitial = {
     fetcher.getPostcard({
       postcardId: t.data.id,
       cb: function (res) {
-        console.log('repeater getpsc:', res);
         if (res.success) {
           let postcard = res.content;
           postcard = Postcard.postcardFromMeta(postcard);
@@ -68,9 +67,15 @@ let RepeaterInitial = {
             let postcard = {
               id: t.data.id
             };
-            wx.redirectTo({
-              url: '../create/create?id=' + t.data.id,
-            });
+            if (t.data.createType == 0) {
+              wx.redirectTo({
+                url: '../create/create?id=' + t.data.id + '&createType=' + t.data.createType,
+              });
+            } else {
+              wx.redirectTo({
+                url: '../mapcreate/mapcreate?id=' + t.data.id + '&createType=' + t.data.createType,
+              });
+            }
           } else if (res.code == 10007) {
             wx.redirectTo({
               url: '../sms/sms?id=' + t.data.id,
@@ -87,23 +92,29 @@ let RepeaterInitial = {
   },
 
   checkParams: function (options) {
-    console.log('repeater check:', options);
     let t = this;
-    if (util.isUndef(options) || util.isUndef(options.id)) {
+    if (util.isUndef(options) || util.isUndef(options.scene)) {
       wx.redirectTo({
         url: '../my/my',
       });
-    } else if (options && !options.id) {
+      return;
+    } 
+    let scene = decodeURIComponent(options.scene || '');
+    let params = scene.split('$');
+    
+     if ( params.length < 2 ) {
       this.showToptip({
         title: '错误的明信片ID',
         type: 'Warning'
       });
-      return;
     } else {
-      t.setData({
-        id: options.id
-      });
-      t.dispose();
+      let createType = params[0];
+      let id = params[1];
+        t.setData({
+          id: id,
+          createType: createType
+        });
+        t.dispose();
     }
   },
 
@@ -112,7 +123,6 @@ let RepeaterInitial = {
     login.login({
       userdata: t.data.poster,
       success: function (res) {
-        console.log('login succ;')
         t.checkParams(options);
       },
       fail: function (res) {
@@ -128,10 +138,10 @@ let RepeaterInitial = {
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    console.log('repeater:', options);
     let t = this;
     app.getUserInfo({
       success: (res) => {
-        console.log('repeater page, user info:', res);
         t.setData({
           poster: res
         });

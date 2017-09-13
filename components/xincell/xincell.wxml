@@ -4,50 +4,165 @@
     <!-- 头部布局 -->
     <view class="cell_head">
       <!-- 头像 -->
-      <image class="cell_avatar" src="{{cellType == 0 ? (postcard.receiverAvatarUrl || '../../assets/avatar_normal.png') : (postcard.senderAvatarUrl || '../../assets/avatar_normal.png')}}" mode="aspectFit"/>
+      <image class="cell_avatar" src="{{cellType == 0 ? (postcard.receiverAvatarUrl || '../../assets/avatar_normal.png') : (postcard.senderAvatarUrl || '../../assets/avatar_normal.png')}}" mode="aspectFit" />
       <!-- 头部右边文字标题 -->
       <view class="cell_head_right">
         <!-- 创建人和日期 -->
         <view class="cell_title_container">
-          <text class="cell_nickname">{{cellType == 0 ? (postcard.receiverNick || postcard.recevierPhone) : (postcard.senderNick || '未知')}}</text>
-          <text class="cell_date">{{postcard.createTimeStr}}{{showReceiveStatus ? (postcard.signForTime ? ' 已签收' : ' 等待签收') : '' }}</text>
+          <block wx:if='{{postcard.cardType == 0}}'>
+            <text class="cell_nickname">{{cellType == 0 ? (postcard.receiverNick || postcard.receiverPhone) : (postcard.senderNick || '未知')}}</text>
+            <text class="cell_date">{{postcard.createTimeStr}}{{showReceiveStatus ? (postcard.signForTime ? ' 已签收' : ' 等待签收') : '' }}</text>
+          </block>
+          <block wx:else>
+            <text class="cell_single_title">{{preset.scenicSpot || '未知'}}</text>
+          </block>
         </view>
         <block wx:if='{{collect == 0}}'>
           <block wx:if='{{postcard.status == 0}}'>
-            <view class="cell_status">已撤回</view> 
+            <view class="cell_status">已撤回</view>
           </block>
-        <block wx:else>
-          <image data-postcard="{{postcard}}" data-index="{{idx}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit"/>
-        </block>
+          <block wx:else>
+            <image data-postcard="{{postcard}}" data-index="{{idx}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit" />
+          </block>
         </block>
       </view>
     </view>
     <!-- 视频、图片控件布局 -->
-    <view class="cell_preview_container">
-    <block wx:if="{{postcard.video}}">
-      <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.video}}" objectFit="fit" />
-    </block>
-    <block wx:else>
-      <image class="cell_preview_image" src="../../assets/scenery.jpg"/>
-    </block>
+    <view class="cell_preview_container" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
+      <block wx:if="{{postcard.resource.type == 2}}">
+        <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}" objectFit="fit">
+        <!-- <cover-view>
+          <cover-image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+        </cover-view> -->
+        </video>
+      </block>
+      <block wx:else>
+        <image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+      </block>
     </view>
     <!-- 音频控件布局 -->
-    <block wx:if="{{postcard.audio}}">
-    <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
-      <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
-       
-      <view class="cell_process_container">
-        <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}" stroke-width="44">
-        </progress>
-        <view class="cell_audio_play_title" >点击播放</view>
+    <block wx:if="{{postcard.resource.type == 3}}">
+      <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
+        <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
+
+        <view class="cell_process_container">
+          <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}">
+          </progress>
+          <view class="cell_audio_play_title">点击播放</view>
+        </view>
+        <text class="cell_audio_time">{{postcard.resource.durationStr}}s</text>
       </view>
-      <text class="cell_audio_time">{{postcard.audioDurationStr}}s</text>
+    </block>
+    <view class="cell_separator" />
+    <!-- 位置控件布局 -->
+    <text class="cell_location" bindtap='showLocation' data-postcard="{{postcard}}" data-index="{{idx}}">{{postcard.address && postcard.address != 'undefined' ? postcard.address : postcard.longitudeLatitude}}</text>
+  </view>
+</template>
+
+<template name="xincell_preview">
+  <view class="cell_container">
+    <!-- 头部布局 -->
+    <view class="cell_head">
+      <!-- 头像 -->
+      <image class="cell_avatar" src="../../assets/send_normal.png" mode="aspectFit" />
+      <!-- 头部右边文字标题 -->
+      <view class="cell_head_right">
+        <!-- 创建人和日期 -->
+        <view class="cell_title_container">
+          <block wx:if='{{postcard.cardType == 0}}'>
+            <text class="cell_nickname">{{postcard.receiverNick || postcard.receiverPhone}}</text>
+            <text class="cell_date">{{postcard.createTimeStr}}</text>
+          </block>
+          <block wx:else>
+            <text class="cell_single_title">{{preset.scenicSpot || '未知'}}</text>
+          </block>
+        </view>
+        <block wx:if='{{collect == 0}}'>
+          <block wx:if='{{postcard.status == 0}}'>
+            <view class="cell_status">已撤回</view>
+          </block>
+          <block wx:else>
+            <image data-postcard="{{postcard}}" data-index="{{idx}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit" />
+          </block>
+        </block>
+      </view>
     </view>
+    <!-- 视频、图片控件布局 -->
+    <view class="cell_preview_container" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
+      <block wx:if="{{postcard.resource.type == 2}}">
+        <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}" objectFit="fit">
+        <!-- <cover-view>
+          <cover-image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+        </cover-view> -->
+        </video>
+      </block>
+      <block wx:else>
+        <image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+      </block>
+    </view>
+    <!-- 音频控件布局 -->
+    <block wx:if="{{postcard.resource.type == 3}}">
+      <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
+        <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
+
+        <view class="cell_process_container">
+          <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}">
+          </progress>
+          <view class="cell_audio_play_title">点击播放</view>
+        </view>
+        <text class="cell_audio_time">{{postcard.resource.durationStr}}s</text>
+      </view>
     </block>
-    <block wx:if="{{postcard.address !== null && postcard.address !== 'undefined' && postcard.address.length}}">
-      <view class="cell_separator"/>
-      <!-- 位置控件布局 -->
-      <text class="cell_location">{{postcard.address}}</text>
+    <view class="cell_separator" />
+    <!-- 位置控件布局 -->
+    <text class="cell_location" bindtap='showLocation' data-postcard="{{postcard}}" data-index="{{idx}}">{{postcard.address && postcard.address != 'undefined' ? postcard.address : postcard.longitudeLatitude}}</text>
+  </view>
+</template>
+
+
+<!-- 明信片cell 针对地图定制 -->
+<template name="xincell_map">
+  <view class="cell_container">
+    <!-- 头部布局 -->
+    <view class="cell_head_map">
+      <!-- 头像 -->
+      <!-- 头部右边文字标题 -->
+      <view class="cell_head_right_custom">
+        <!-- 创建人和日期 -->
+        <text class="cell_single_title">{{preset.scenicSpot || '未知'}}</text>
+        <block wx:if='{{collect == 0}}'>
+          <image data-postcard="{{postcard}}" data-index="{{idx}}" class="cell_edit" src="../../assets/more_normal.png" mode="aspectFit" bindtap="onEdit" />
+        </block>
+      </view>
+    </view>
+    <!-- 视频、图片控件布局 -->
+    <view class="cell_preview_container" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
+      <block wx:if="{{postcard.resource.type == 2}}">
+        <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}" objectFit="fit">
+        <!-- <cover-view>
+          <cover-image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+        </cover-view> -->
+        </video>
+      </block>
+      <block wx:else>
+        <image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+      </block>
+    </view>
+    <!-- 音频控件布局 -->
+    <block wx:if="{{postcard.resource.type == 3}}">
+      <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
+        <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
+
+        <view class="cell_process_container">
+          <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}">
+          </progress>
+          <view class="cell_audio_play_title">点击播放</view>
+        </view>
+        <text class="cell_audio_time">{{postcard.resource.durationStr}}s</text>
+      </view>
     </block>
+    <view class="cell_separator" />
+    <!-- 位置控件布局 -->
+    <text class="cell_location" bindtap='showLocation' data-postcard="{{postcard}}" data-index="{{idx}}">{{postcard.address && postcard.address != 'undefined' ? postcard.address : postcard.longitudeLatitude}}</text>
   </view>
 </template>

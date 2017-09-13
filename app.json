@@ -4,6 +4,7 @@
     "pages/my/my",
     "pages/collect/collect",
     "pages/create/create",
+    "pages/mapcreate/mapcreate",
     "pages/preview/preview",
     "pages/sms/sms",
     "pages/MyCollect/mycollect"

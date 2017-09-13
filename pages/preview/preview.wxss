@@ -7,13 +7,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px;
 }
 
 .preview_head {
-  margin: 10px;
+  margin: 20px;
 }
 
 .preview_add_collect {
-  margin: 5px 10px;
+  margin: 0px 20px;
+  margin-bottom: 20px;
 }

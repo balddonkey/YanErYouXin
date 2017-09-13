@@ -1,4 +1,4 @@
-// create.js
+// pages/mapcreate/mapcreate.js
 
 let recorder = require('../../components/recorder/recorder.js');
 let TopTip = require('../../components/TopTip/TopTip.js');
@@ -12,8 +12,7 @@ var app = getApp();
 
 let systemInfo = wx.getSystemInfoSync();
 let previewHeight = (systemInfo.windowWidth - 40) * 1080 / 1920;
-let bottomHeight = systemInfo.windowHeight - previewHeight - 44 - 44 - 44 - 60;
-console.log('bottom height:', bottomHeight);
+let bottomHeight = systemInfo.windowHeight - previewHeight - 44 - 44 - 44 - 40;
 
 let CreateInitial = {
 
@@ -23,7 +22,6 @@ let CreateInitial = {
   data: {
     bottomHeight: bottomHeight,
     previewHeight: previewHeight,
-    enableSelect: false,
     invalidId: true,
     create: true,
     errMsg: '',
@@ -32,7 +30,6 @@ let CreateInitial = {
     percent: 0,
     postcard: {
       poster: null,
-      receiverPhone: '',
       id: null,
       audio: null,
       audioDuration: 0,
@@ -45,31 +42,6 @@ let CreateInitial = {
         type: 0
       }
     }
-  },
-
-  // 粘贴
-  onPaste: function () {
-    let t = this;
-    wx.getClipboardData({
-      success: function (res) {
-        let objc = {
-          detail: {
-            value: res.data
-          }
-        };
-        t.onInputPhoneNum(objc);
-      }
-    });
-  },
-
-  onClearPhoneNum: function () {
-    let t = this;
-    let objc = {
-      detail: {
-        value: ''
-      }
-    };
-    t.onInputPhoneNum(objc);
   },
 
   // 录制视频
@@ -107,9 +79,7 @@ let CreateInitial = {
         );
       },
       fail: function (res) {
-
-      },
-      complete: function (res) {
+        console.log('选择视频失败');
       }
     })
   },
@@ -124,7 +94,6 @@ let CreateInitial = {
 
   didRecordAudio: function (fp, duration) {
     let audioDuration = parseFloat(duration.toFixed(2));
-    console.log('did record audio:', audioDuration);
     let t = this;
     let postcard = t.data.postcard;
     postcard.audioDuration = audioDuration;
@@ -240,53 +209,17 @@ let CreateInitial = {
   // 预览
   onPreview: function () {
     let t = this;
-    let phone = this.data.postcard.receiverPhone || '';
-    if (phone.search(phonePattern) < 0) {
-      this.showToptip({
-        title: '无效的手机号码',
-        type: 'Warning'
-      });
-      return;
-    }
-    console.log('create:', t.data.postcard);
     let params = JSON.stringify(this.data.postcard);
-    console.log('preview params:', params);
     wx.navigateTo({
       url: '../preview/preview?postcard=' + params + '&createType=' + t.data.postcard.cardType,
     });
-  },
-
-  onInputPhoneNum: function (objc) {
-    let t = this;
-    let value = objc.detail.value;
-    let postcard = t.data.postcard;
-    postcard.receiverPhone = value;
-    t.setData({
-      postcard: postcard
-    });
-    let ss = value.search(phonePattern);
-    if (ss >= 0) {
-      t.setData({
-        enableSelect: true
-      });
-    } else {
-      t.setData({
-        enableSelect: false
-      });
-      if (value.length > 11) {
-        t.showToptip({
-          title: '无效的手机号码',
-          type: 'Warning'
-        });
-      }
-    }
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    console.log('mc options:', options);
     wx.setNavigationBarTitle({
       title: '新的明信'
     });
@@ -300,19 +233,19 @@ let CreateInitial = {
       });
       return;
     }
-    let postcard = t.data.postcard;
-    postcard.id = options.id;
-    postcard.cardType = options.createType;
+    t.data.postcard.id = options.id;
+    t.data.postcard.cardType = options.createType
     t.setData({
       invalidId: false,
-      postcard: postcard
+      postcard: t.data.postcard
     });
+    console.log('mc:', t.data.postcard);
     fetcher.getPreset({
       data: {
         postcardId: options.id,
         type: options.type
       },
-      cb: function (res) {
+      cb: function(res) {
         console.log('preset:', res);
         if (res.success) {
           let content = res.content;
@@ -328,12 +261,12 @@ let CreateInitial = {
           });
         }
       }
-    });
+    }); 
     wx.showLoading({
       title: '定位中',
     });
     wx.getLocation({
-      success: function(res) {
+      success: function (res) {
         t.data.postcard.latitude = res.latitude;
         t.data.postcard.longitude = res.longitude;
         t.data.postcard.longitudeLatitude = res.longitude + ',' + res.latitude;
@@ -341,13 +274,13 @@ let CreateInitial = {
           postcard: t.data.postcard
         });
       },
-      fail: function(res) {
+      fail: function (res) {
         t.showToptip({
           title: '定位失败',
           type: 'Warning'
         });
       },
-      complete: function(res) {
+      complete: function (res) {
         wx.hideLoading();
       }
     });
@@ -363,6 +296,7 @@ let CreateInitial = {
       scope: 'scope.record',
     });
     app.getUserInfo((res) => {
+      console.log('create page, user info:', res);
       postcard.poster = res;
       t.setData({
         postcard: postcard

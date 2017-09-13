@@ -14,6 +14,6 @@
     bindtouchcancel="recorder_tap_cancel"
     animation="{{recorder_button_animation}}"
   />
-  <image class="recorder_close" bindtap="onClose" src="../../assets/close.png" mode="aspectFit"/>
+  <!-- <image class="recorder_close" bindtap="onClose" src="../../assets/close.png" mode="aspectFit"/> -->
 </view>
 </template>

@@ -1,4 +1,4 @@
-/* create.wxss */
+/* pages/mapcreate/mapcreate.wxss */
 
 @import "../../components/xincell/xincell.wxss";
 @import "../../components/recorder/recorder.wxss";
@@ -22,9 +22,16 @@
   margin: 20px;
 }
 
+.create_phone_input {
+  line-height: 44px;
+  height: 44px;
+  font-size: 17px;
+  width: 100%;
+}
+
 .select_container {
   display: flex;
-  height: 170px;
+  /* height: 170px; */
   background-color: white;
   margin: 20px;
   box-shadow: 1px 1px 2px #ddd;
@@ -55,7 +62,7 @@
 }
 
 .record_panel_text {
-  font-size: 28px;
+  font-size: 30px;
   color: #888;
   width: 44px;
   text-align: center;
