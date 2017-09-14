@@ -110,7 +110,7 @@ let MyInitial = {
                     title: '已撤回',
                   });
                   let postcards = t.data.postdatas;
-                  postcards[idx].status = 0;
+                  postcards.splice(idx, 1);
                   t.setData({
                     postdatas: postcards
                   });

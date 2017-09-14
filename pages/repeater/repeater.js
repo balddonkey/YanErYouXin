@@ -64,9 +64,6 @@ let RepeaterInitial = {
         } else {
           // 明信片未创建
           if (res.code == 10008) {
-            let postcard = {
-              id: t.data.id
-            };
             if (t.data.createType == 0) {
               wx.redirectTo({
                 url: '../create/create?id=' + t.data.id + '&createType=' + t.data.createType,
