@@ -14,10 +14,10 @@
         <view class="create_head">
           <view class="cell_container">
             <!-- 头部布局 -->
-            <view class="cell_head_map">
+            <view class="cell_head">
               <!-- 头像 -->
               <!-- 头部右边文字标题 -->
-              <view class="cell_head_right">
+              <view class="cell_head_right_custom">
                 <!-- 创建人和日期 -->
                 <text class="cell_single_title">{{preset.scenicSpot || '未知'}}</text>
               </view>

@@ -31,6 +31,15 @@ let CollectInitial = {
     }
   },
 
+  // Xincell delegate method 
+  onShowLocation: function (p, idx) {
+    console.log('ppppp:', p);
+    wx.openLocation({
+      latitude: p.latitude,
+      longitude: p.longitude,
+    })
+  },
+
   onCollect: function(e) {
     let postcard = this.data.postcard;
     let t = this;
