@@ -78,9 +78,20 @@ let RepeaterInitial = {
               url: '../sms/sms?id=' + t.data.id,
             });
           } else {
-            t.showToptip({
+            // t.showToptip({
+            //   title: res.msg,
+            //   type: 'Warning'
+            // });
+            wx.showToast({
               title: res.msg,
-              type: 'Warning'
+              icon: 'loading',
+              complete: function() {
+                setTimeout(() => {
+                  wx.redirectTo({
+                    url: '../my/my',
+                  });
+                }, 1 * 1000);
+              }
             });
           }
         }
@@ -100,9 +111,12 @@ let RepeaterInitial = {
     let params = scene.split('$');
     
      if ( params.length < 2 ) {
-      this.showToptip({
+      wx.showToast({
         title: '错误的明信片ID',
-        type: 'Warning'
+        icon: 'loading'
+      });
+      wx.redirectTo({
+        url: '../my/my',
       });
     } else {
       let createType = params[0];
@@ -144,7 +158,7 @@ let RepeaterInitial = {
         });
         t.onLogin(options);
       },
-      fail: (res) => {
+      fail: function(res) {
         this.showToptip({
           type: 'Warning',
           title: '登录失败: ' + res.errMsg
@@ -158,6 +172,9 @@ let RepeaterInitial = {
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (options) {
+    wx.setNavigationBarTitle({
+      title: '加载中...'
+    });
     wx.showNavigationBarLoading();
   },
 

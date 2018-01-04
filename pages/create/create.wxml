@@ -32,8 +32,8 @@
             </view>
           </view>
           <!-- 视频、图片控件布局 -->
-          <view class="cell_preview_container" style='height: {{previewHeight + "px"}}'>
-              <image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+          <view class="cell_preview_container">
+              <image class="cell_preview_image" src="{{postcard.coverPicture}}"  mode='widthFix'/>
           </view>
           <!-- 位置控件布局 -->
           <text class="cell_location" bindtap="chooseLocation">{{postcard.address || '点击添加位置'}}</text>

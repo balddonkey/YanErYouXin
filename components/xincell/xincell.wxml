@@ -28,23 +28,23 @@
       </view>
     </view>
     <!-- 视频、图片控件布局 -->
-    <view class="cell_preview_container" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
+    <view class="cell_preview_container">
       <block wx:if="{{postcard.resource.type == 2}}">
-        <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}" objectFit="fit">
+        <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}"
+         objectFit="fit" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
         <!-- <cover-view>
           <cover-image class="cell_preview_image" src="{{postcard.coverPicture}}" />
         </cover-view> -->
         </video>
       </block>
       <block wx:else>
-        <image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+        <image class="cell_preview_image" src="{{postcard.coverPicture}}" mode='widthFix'/>
       </block>
     </view>
     <!-- 音频控件布局 -->
     <block wx:if="{{postcard.resource.type == 3}}">
       <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
-        <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
-
+        <image class="cell_audio" src="{{playAudio.index == idx && postcard.playing ? '../../assets/audio_play_highlight.png':'../../assets/audio_play_wait.png'}}" mode="aspectFit"></image>
         <view class="cell_process_container">
           <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}">
           </progress>
@@ -97,13 +97,13 @@
         </video>
       </block>
       <block wx:else>
-        <image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+        <image class="cell_preview_image" src="{{postcard.coverPicture}}"  mode='widthFix'/>
       </block>
     </view>
     <!-- 音频控件布局 -->
     <block wx:if="{{postcard.resource.type == 3}}">
       <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
-        <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
+        <image class="cell_audio" src="{{playAudio.index == idx && postcard.playing ? '../../assets/audio_play_highlight.png':'../../assets/audio_play_wait.png'}}" mode="aspectFit"></image>
 
         <view class="cell_process_container">
           <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}">
@@ -145,13 +145,13 @@
         </video>
       </block>
       <block wx:else>
-        <image class="cell_preview_image" src="{{postcard.coverPicture}}" />
+        <image class="cell_preview_image" src="{{postcard.coverPicture}}"  mode='widthFix'/>
       </block>
     </view>
     <!-- 音频控件布局 -->
     <block wx:if="{{postcard.resource.type == 3}}">
       <view class="cell_audio_container" capture-catch:tap="tapVoice" data-postcard="{{postcard}}" data-index="{{idx}}">
-        <image class="cell_audio" src="../../assets/audio_play_normal.png" mode="aspectFit"></image>
+        <image class="cell_audio" src="{{playAudio.index == idx && postcard.playing ? '../../assets/audio_play_highlight.png':'../../assets/audio_play_wait.png'}}" mode="aspectFit"></image>
 
         <view class="cell_process_container">
           <progress class="cell_audio_process" percent="{{playAudio.index == idx ? postcard.percent * 100 : 0}}">

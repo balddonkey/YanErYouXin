@@ -49,9 +49,8 @@ let CollectInitial = {
       },
       cb: function(res) {
         if (res.success) {
-          t.showToptip({
-            timeout: 3,
-            title: '收藏成功'
+          wx.redirectTo({
+            url: '../MyCollect/mycollect',
           });
         } else {
           t.showToptip({
@@ -77,16 +76,19 @@ let CollectInitial = {
     
     let postcard = t.data.postcard;
     let duration = t.data.postcard.resource.duration;
+    postcard.playing = true;
     let time = 0;
     t.data.playbackId = setInterval(() => {
       time += util.recordTimeInterval;
       postcard.percent = time / duration;
+      if (time >= duration) {
+        t.playbackStop();
+        postcard.playing = false;
+      }
       t.setData({
         postcard: postcard
       });
-      if (time >= duration) {
-        t.playbackStop();
-      }
+      console.log('play done:', postcard);
     }, util.recordTimeInterval * 1000);
     t.setData({
       playbackId: t.data.playbackId

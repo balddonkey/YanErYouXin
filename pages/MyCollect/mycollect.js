@@ -88,14 +88,16 @@ let MyCollectInitial = {
     t.data.playAudio.id && clearInterval(t.data.playAudio.id);
     let postcards = t.data.postdatas;
     postcards[idx].percent = 0;
+    postcards[idx].playing = true;
     let playId = setInterval(() => {
       postcards[idx].percent += (util.recordTimeInterval / time);
+      if (postcards[idx].percent >= 1) {
+        t.data.playAudio.id && clearInterval(t.data.playAudio.id);
+        postcards[idx].playing = false;
+      }
       t.setData({
         postdatas: postcards
       });
-      if (postcards[idx].percent >= 1) {
-        t.data.playAudio.id && clearInterval(t.data.playAudio.id);
-      }
     }, util.recordTimeInterval * 1000);
     t.setData({
       postdatas: postcards,

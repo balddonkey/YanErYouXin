@@ -12,7 +12,7 @@ var app = getApp();
 
 let systemInfo = wx.getSystemInfoSync();
 let previewHeight = (systemInfo.windowWidth - 40) * 1080 / 1920;
-let bottomHeight = systemInfo.windowHeight - previewHeight - 44 - 44 - 44 - 40;
+let bottomHeight = systemInfo.windowHeight - previewHeight - 44 - 44 - 44 - 60;
 
 let CreateInitial = {
 
@@ -87,8 +87,11 @@ let CreateInitial = {
   // 录制音频
   onAudioRecord: function () {
     let t = this;
+    let recorder_data = t.data.recorder_data;
+    recorder_data.timerStr = null;
     t.setData({
-      create: false
+      create: false,
+      recorder_data: recorder_data
     });
   },
 
@@ -119,7 +122,7 @@ let CreateInitial = {
           t.data.postcard.resource.path = res.content.path;
           t.data.postcard.resource.type = 3;
           t.setData({
-            errMsg: JSON.stringify(res) || '屁都没有',
+            errMsg: JSON.stringify(res) || '',
             postcard: t.data.postcard
           });
           t.onPreview();
@@ -159,17 +162,21 @@ let CreateInitial = {
       t.playbackStop();
       // return;
     }
+    let postcard = t.data.postcard;
+    postcard.playing = true;
     let duration = t.data.postcard.audioDuration;
     let time = 0;
     t.data.playbackId = setInterval(() => {
       time += util.recordTimeInterval;
       t.data.percent = time / duration;
-      t.setData({
-        percent: t.data.percent
-      });
       if (time >= duration) {
         t.playbackStop();
+        postcard.playing = false;
       }
+      t.setData({
+        percent: t.data.percent,
+        postcard: postcard
+      });
     }, util.recordTimeInterval * 1000);
     t.setData({
       playbackId: t.data.playbackId

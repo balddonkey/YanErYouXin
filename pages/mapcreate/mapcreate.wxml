@@ -23,9 +23,9 @@
               </view>
             </view>
             <!-- 视频、图片控件布局 -->
-            <view class="cell_preview_container" style='height: {{previewHeight + "px"}}'>
+            <view class="cell_preview_container">
               <!-- <image class="cell_preview_image" src="../../assets/biantai.gif" mode="aspectFill"/> -->
-              <image class="cell_preview_image" src="{{postcard.coverPicture || null}}" />
+              <image class="cell_preview_image" src="{{postcard.coverPicture || null}}"  mode='widthFix'/>
             </view>
             <view class="cell_separator" />
             <!-- 位置控件布局 -->

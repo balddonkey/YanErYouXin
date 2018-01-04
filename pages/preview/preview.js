@@ -75,20 +75,24 @@ let PreviewInitial = {
       // return;
     }
     let postcard = t.data.postcard;
+    postcard.playing = true;
+    console.log('start:', postcard);
     let duration = t.data.postcard.resource.duration;
     let time = 0;
     t.data.playbackId = setInterval(() => {
       time += util.recordTimeInterval;
       postcard.percent = time / duration;
+      if (time >= duration) {
+        t.playbackStop();
+        postcard.playing = false;
+      }
       t.setData({
         postcard: postcard
       });
-      if (time >= duration) {
-        t.playbackStop();
-      }
     }, util.recordTimeInterval * 1000);
     t.setData({
-      playbackId: t.data.playbackId
+      playbackId: t.data.playbackId,
+      postcard: postcard
     });
   },
 

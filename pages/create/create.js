@@ -75,6 +75,9 @@ let CreateInitial = {
   // 录制视频
   onVideoRecord: function () {
     let t = this;
+    if (!t.data.enableSelect) {
+      return;
+    }
     wx.chooseVideo({
       maxDuration: 15,
       success: function (res) {
@@ -117,8 +120,14 @@ let CreateInitial = {
   // 录制音频
   onAudioRecord: function () {
     let t = this;
+    if (!t.data.enableSelect) {
+      return;
+    }
+    let recorder_data = t.data.recorder_data;
+    recorder_data.timerStr = null;
     t.setData({
-      create: false
+      create: false,
+      recorder_data: recorder_data
     });
   },
 
@@ -150,7 +159,7 @@ let CreateInitial = {
           t.data.postcard.resource.path = res.content.path;
           t.data.postcard.resource.type = 3;
           t.setData({
-            errMsg: JSON.stringify(res) || '屁都没有',
+            errMsg: JSON.stringify(res) || '',
             postcard: t.data.postcard
           });
           t.onPreview();
@@ -190,20 +199,25 @@ let CreateInitial = {
       t.playbackStop();
       // return;
     }
+    let postcard = t.data.postcard;
+    postcard.playing = true;
     let duration = t.data.postcard.audioDuration;
     let time = 0;
     t.data.playbackId = setInterval(() => {
       time += util.recordTimeInterval;
       t.data.percent = time / duration;
-      t.setData({
-        percent: t.data.percent
-      });
+      postcard.playing = false;
       if (time >= duration) {
         t.playbackStop();
       }
+      t.setData({
+        percent: t.data.percent,
+        postcard: postcard
+      });
     }, util.recordTimeInterval * 1000);
     t.setData({
-      playbackId: t.data.playbackId
+      playbackId: t.data.playbackId,
+      postcard: postcard
     });
   },
 
