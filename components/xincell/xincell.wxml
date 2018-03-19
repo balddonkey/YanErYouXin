@@ -28,10 +28,10 @@
       </view>
     </view>
     <!-- 视频、图片控件布局 -->
-    <view class="cell_preview_container">
+    <view class="cell_preview_container" style='height:{{(windowWidth - 40) / postcard.coverAspect + "px"}}'>
       <block wx:if="{{postcard.resource.type == 2}}">
         <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}"
-         objectFit="fit" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
+         objectFit="fit">
         <!-- <cover-view>
           <cover-image class="cell_preview_image" src="{{postcard.coverPicture}}" />
         </cover-view> -->
@@ -88,7 +88,7 @@
       </view>
     </view>
     <!-- 视频、图片控件布局 -->
-    <view class="cell_preview_container" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
+    <view class="cell_preview_container" style='height:{{(windowWidth - 40) / postcard.coverAspect + "px"}}'>
       <block wx:if="{{postcard.resource.type == 2}}">
         <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}" objectFit="fit">
         <!-- <cover-view>
@@ -136,7 +136,7 @@
       </view>
     </view>
     <!-- 视频、图片控件布局 -->
-    <view class="cell_preview_container" style='height:{{(windowWidth - 40) * 1080 / 1920 + "px"}}'>
+    <view class="cell_preview_container" style='height:{{(windowWidth - 40) / postcard.coverAspect + "px"}}'>
       <block wx:if="{{postcard.resource.type == 2}}">
         <video id="cell_preview_video" class="cell_preview_video" src="{{postcard.resource.path}}" objectFit="fit">
         <!-- <cover-view>

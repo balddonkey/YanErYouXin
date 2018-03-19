@@ -8,7 +8,6 @@
     <text>{{errMsg}}</text>
   </block>
   <block wx:if='{{!invalidId}}'>
-    <scroll-view class="create_scroll" scroll-x>
 
       <view class="classname" wx:if="{{create}}">
         <view class="create_head">
@@ -56,6 +55,5 @@
       <view class="audio_record_panel" wx:if="{{!create}}">
         <template is="recorder" data="{{...recorder_data, zzz: '222'}}"></template>
       </view>
-    </scroll-view>
   </block>
 </view>

@@ -25,3 +25,9 @@
   color: #bbb;
   font-size: 17px;
 }
+
+.my_contact {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}

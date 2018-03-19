@@ -114,6 +114,11 @@ let MyInitial = {
                   t.setData({
                     postdatas: postcards
                   });
+                  setTimeout(() => {
+                    t.setData({
+                      postdatas: postcards
+                    });
+                  }, 0.25 * 1000);
                 } else {
                   t.showToptip({
                     title: '撤回失败: ' + res.msg,
@@ -180,6 +185,10 @@ let MyInitial = {
         setTimeout(() => {
           wx.pageScrollTo({
             scrollTop: 84,
+          });
+
+          t.setData({
+            postdatas: res.content
           });
         }, 0.25 * 1000);
       }

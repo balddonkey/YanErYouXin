@@ -18,4 +18,6 @@
       <text>这里空空的，给你的朋友寄张明信吧</text>
     </view>
   </block>
+  <contact-button class='my_contact' type="default-dark" size="20" session-from="weapp">
+  </contact-button>
 </view>

@@ -127,7 +127,7 @@ let MyCollectInitial = {
               data: {
                 postcardId: p.postcardId
               },
-              cb: function(res) {
+              cb: function (res) {
                 if (res.success) {
                   wx.showToast({
                     title: '已取消收藏',
@@ -137,6 +137,11 @@ let MyCollectInitial = {
                   t.setData({
                     postdatas: postcards
                   });
+                  setTimeout(() => {
+                    t.setData({
+                      postdatas: postcards
+                    });
+                  }, 0.25 * 1000);
                 } else {
                   t.showToptip({
                     title: '取消收藏失败: ' + res.msg,
@@ -184,6 +189,10 @@ let MyCollectInitial = {
           setTimeout(() => {
             wx.pageScrollTo({
               scrollTop: 84,
+            });
+
+            t.setData({
+              postdatas: res.content
             });
           }, 0.25 * 1000);
         } else {
